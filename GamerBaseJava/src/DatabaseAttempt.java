@@ -32,6 +32,8 @@ public class DatabaseAttempt {
 		if(this.reader.readLine().equals("Y")) {
 			GameServices gameHandler = new GameServices(connection);
 			OwnedListServices ownedListHandler = new OwnedListServices(connection, user);
+			FriendsList fl = new FriendsList(username, connection);
+			Ratings ratingHandler = new Ratings(username, connection);
 			while(true) {
 				System.out.println();
 				System.out.println("Enter command g for Game Commands");
@@ -102,9 +104,70 @@ public class DatabaseAttempt {
 							gameHandler.SortGames(gameName, gamePub, gameGenre, gameRelease);
 							break;
 					}
+				  break;
 //					System.out.println("Entered " + command);
-				    
-				    break;
+				  
+				  case "r":
+					  System.out.println("Ratings Commands: ");
+					  System.out.println("   (C) Create Rating");
+					  System.out.println("   (R) Remove Rating");
+					  System.out.println("   (U) Update Rating");
+					  String r = this.reader.readLine();
+					  if(r.equals("C")){
+						  System.out.println("Please Enter Game Name: ");
+						  String gameName = this.reader.readLine();
+						  System.out.println("Please Enter Review \n");
+						  String review = this.reader.readLine();
+						  System.out.println("Please Enter Rating: ");
+						  String rating = this.reader.readLine();
+						  float rate = Float.parseFloat(rating);
+						  ratingHandler.createRating(gameName, review, rate);
+					  }else if(r.equals("R")) {
+						  System.out.println("Please Enter Game Name: ");
+						  String gameName = this.reader.readLine();
+						  ratingHandler.deleteRating(gameName);
+					  }else if(r.equals("U")) {
+						  System.out.println("Please Enter Game Name: ");
+						  String gameName = this.reader.readLine();
+						  System.out.println("Please Enter Review \n");
+						  String review = this.reader.readLine();
+						  System.out.println("Please Enter Rating: ");
+						  String rating = this.reader.readLine();
+						  float rate = Float.parseFloat(rating);
+						  ratingHandler.updateRating(gameName, review, rate);
+						  break;
+					  }else {
+						  System.out.println("Invalid");
+					  }
+					  break;
+					  
+				  case "f":		  
+					  
+					  System.out.println("Friends List Commands: ");
+					  System.out.println("  (V) View Friends");
+					  System.out.println("  (A) Add Friend");
+					  System.out.println("  (R) Remove Friend");
+					  System.out.print("  (B) Back \n Command: ");
+					  String r = this.reader.readLine();
+					  if(r.equals("V")) {
+						  ArrayList<String> friends = fl.readFriendsList();
+						  System.out.println("Friends: ");
+						  for(int i = 0; i < friends.size(); i++) System.out.println(friends.get(i));
+					  }else if(r.equals("A")){
+						  System.out.println("Please Enter Friend Name: ");
+						  String friendName = this.reader.readLine();
+						  fl.addFriend(friendName);
+					  }else if(r.equals("R")) {
+						  System.out.println("Please Enter Friend Name: ");
+						  String name = this.reader.readLine();
+						  fl.removeFriend(name);
+					  }else if(r.equals("B")) {
+						  break;
+					  }else {
+						  System.out.println("Invalid");
+					  }
+					  break;
+					  
 				  case "u":
 				    System.out.println("user");
 				    break;

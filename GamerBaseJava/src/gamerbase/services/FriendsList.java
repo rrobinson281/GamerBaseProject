@@ -17,7 +17,7 @@ class FriendsList{
 	
 	public ArrayList<String> readFriendsList(){
 		ArrayList<String> friends = new ArrayList<String>();
-		String query = "SELECT * FROM ('"+this.username+"')";
+		String query = "SELECT * FROM fn_ViewFriendsList('"+this.username+"')";
 		try (Statement stmt = dbService.getConnection().createStatement()){
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next()) {
