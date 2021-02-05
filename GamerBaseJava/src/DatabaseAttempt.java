@@ -17,6 +17,7 @@ public class DatabaseAttempt {
     private String command;
     private DatabaseConnectionService connection;
     private static HandleInput handle;
+    private static String user = "";
 
     public DatabaseAttempt(BufferedReader reader) {
         this.reader = reader;
@@ -25,11 +26,12 @@ public class DatabaseAttempt {
         this.command = "";
     }
 
-    public void go() throws IOException{
+    public void go(DatabaseConnectionService connection) throws IOException{
     	
 		System.out.print("Use X or space to exit commands. Press Y to continue: ");
 		if(this.reader.readLine().equals("Y")) {
-			
+			GameServices gameHandler = new GameServices(connection);
+			OwnedListServices ownedListHandler = new OwnedListServices(connection, user);
 			while(true) {
 				System.out.println();
 				System.out.println("Enter command g for Game Commands");
@@ -40,15 +42,67 @@ public class DatabaseAttempt {
 				command = this.reader.readLine();
 				switch (command) {
 				  case "g":
+					System.out.println("This the the current list of games");
+					gameHandler.ReadAllGames();
 				    System.out.println("Game Commands:");
-				    System.out.println("  CreateGame");
-				    System.out.println("  AddGameToOwnList");
-				    System.out.println("  RemoveGameFromOwnList");
-				    System.out.println("  UpdateGame");
+				    System.out.println("  CreateGame -Add a game to the system");
+				    System.out.println("  ViewMyGames -View games that you own");
+				    System.out.println("  AddGameToOwnList -Add a game to the list of games you own");
+				    System.out.println("  RemoveGameFromOwnList -Remove a game from your owned list");
+				    System.out.println("  UpdateGame -Update a game");
+				    System.out.println("  SortGames -Sort through games in the system");
 				    System.out.print("Enter command or press x to exit: ");
 					command = this.reader.readLine();
 					if(inputReaderIsX(command)) {break;}
-					System.out.println("Entered " + command);
+					String gameName ="";
+					String gameDesc="";
+					String gameGenre="";
+					String gameRelease="";
+					String gamePub="";
+					switch(command.toLowerCase()) {
+						case "creategame":
+							System.out.print("Enter the name of the game: ");
+							gameName = this.reader.readLine();
+							System.out.print("Enter a description of the game(this can be left empty): ");
+							gameDesc = this.reader.readLine();
+							System.out.print("Enter the genre of the game(this can be left empty): ");
+							gameGenre = this.reader.readLine();
+							System.out.print("Enter the release date of the game(this can be left empty): ");
+							gameRelease = this.reader.readLine();
+							System.out.print("Enter the publisher of the game(this can be left empty): ");
+							gamePub = this.reader.readLine();
+							gameHandler.CreateGame(gameName, gameDesc, gameGenre, gameRelease, gamePub);
+							break;
+						case "viewmygames":
+							System.out.println("You own these games: ");
+							ownedListHandler.ViewOwnedGames();
+							break;
+						case "addgametoownlist":
+							System.out.print("Enter the name of the game you want to add to your list: ");
+							gameName = this.reader.readLine();
+							ownedListHandler.AddOwnedGame(gameName);
+							break;
+						case "removegamefromownlist":
+							System.out.print("Enter the name of the game you want to add to your list: ");
+							gameName = this.reader.readLine();
+							ownedListHandler.RemoveOwnedGame(gameName);
+							break;
+						case "updategame":
+							System.out.println("not yet implemented");
+							break;
+						case "sortgames":
+							System.out.print("Enter the name of the game(this can be left empty): ");
+							gameName = this.reader.readLine();
+							System.out.print("Enter the release date of the game(this can be left empty): ");
+							gameRelease = this.reader.readLine();
+							System.out.print("Enter the genre of the game(this can be left empty): ");
+							gameGenre = this.reader.readLine();
+							System.out.print("Enter the Publisher of the game(this can be left empty): ");
+							gamePub = this.reader.readLine();
+							gameHandler.SortGames(gameName, gamePub, gameGenre, gameRelease);
+							break;
+					}
+//					System.out.println("Entered " + command);
 				    
 				    break;
 				  case "u":
@@ -63,7 +117,6 @@ public class DatabaseAttempt {
 					break;
 				}
 				System.out.println();
-	            break;
 			}
 		}
    
@@ -105,7 +158,7 @@ public class DatabaseAttempt {
         }
 
         handle = new HandleInput(connection);
-        test.go();
+        test.go(connection);
         reader.close();
 
     }
@@ -117,6 +170,7 @@ public class DatabaseAttempt {
 				System.out.print("Insert Username: ");
 				test.command = reader.readLine();
 				String username = test.command;
+				user = username;
 				test.command = "";
 				System.out.print("Insert Password: ");
 				test.command = reader.readLine();
@@ -127,6 +181,7 @@ public class DatabaseAttempt {
 				System.out.print("Insert Username: ");
 				test.command = reader.readLine();
 				String username = test.command;
+				user = username;
 				test.command = "";
 				System.out.print("Insert Password: ");
 				test.command = reader.readLine();

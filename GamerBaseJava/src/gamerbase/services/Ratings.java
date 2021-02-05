@@ -16,6 +16,7 @@ public class Ratings {
 	}
 	
 	public void createRating(int gameID, String review, float rating) {
+		review = review.equals("") ? null : review;
 		CallableStatement newRating = null;
 		try {
 			newRating = dbService.getConnection().prepareCall("{call CreateRating(?, ?, ?, ?)}");

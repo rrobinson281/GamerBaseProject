@@ -117,13 +117,14 @@ public class GameServices {
 			cs.execute();
 			int value = cs.getInt(1);
 			if(value == 1) {
-				System.out.println("Soda name cannot be null or empty.");
+				System.out.println("GameName cannot be null or empty.");
 				return false;
 			}
 			else if(value == 2) {
 				System.out.println("Publisher has to be an existing publisher or null.");
 				return false;
 			}
+			GameIdMap.put(name, GameIdMap.size());
 			System.out.println("Game added sucessfully!");
 			System.out.println();
 			return true;
