@@ -1,9 +1,12 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.CallableStatement;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 
 import gamerbase.services.*;
 
@@ -111,8 +114,15 @@ public class DatabaseAttempt {
     	try {
 			if(reader.readLine().toLowerCase().equals("new")) {
 				//login operations
-				System.out.println("Unavailable");
-				return false;
+				System.out.print("Insert Username: ");
+				test.command = reader.readLine();
+				String username = test.command;
+				test.command = "";
+				System.out.print("Insert Password: ");
+				test.command = reader.readLine();
+				String password = test.command;
+				register(username,password,connection);
+				return true;
 			}else {
 				System.out.print("Insert Username: ");
 				test.command = reader.readLine();
@@ -157,5 +167,25 @@ public class DatabaseAttempt {
         }
         
         return false;
+    }
+    public static boolean register(String username, String password, DatabaseConnectionService dbCon) {
+    	Connection con = dbCon.getConnection();
+		CallableStatement cs;
+		try {
+			cs = con.prepareCall("{? = call RegisterUser(?,?)}");
+			cs.registerOutParameter(1, Types.INTEGER);
+			cs.setString(2, username);
+			cs.setString(3, password);
+			cs.execute();
+			int value = cs.getInt(1);
+			if(value == 1) {
+				System.out.println("Null values are not allowed in the Login Table.");
+				return false;
+			}
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+    	return false;
     }
 }
