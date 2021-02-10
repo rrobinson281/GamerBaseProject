@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-class FriendsList{
+public class FriendsList{
 	private String username;
 	private DatabaseConnectionService dbService = null;
 	

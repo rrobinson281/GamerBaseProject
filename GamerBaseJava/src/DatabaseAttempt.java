@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
 
 import gamerbase.services.*;
 
@@ -30,16 +31,23 @@ public class DatabaseAttempt {
     	
 		System.out.print("Use X or space to exit commands. Press Y to continue: ");
 		if(this.reader.readLine().equals("Y")) {
+			ListServices listHandler = new ListServices(connection, user);
 			GameServices gameHandler = new GameServices(connection);
 			OwnedListServices ownedListHandler = new OwnedListServices(connection, user);
-			FriendsList fl = new FriendsList(username, connection);
-			Ratings ratingHandler = new Ratings(username, connection);
+			FriendsList fl = new FriendsList(user, connection);
+			Ratings ratingHandler = new Ratings(user, connection);
 			while(true) {
+				String gameName ="";
+				String gameDesc="";
+				String gameGenre="";
+				String gameRelease="";
+				String gamePub="";
 				System.out.println();
 				System.out.println("Enter command g for Game Commands");
+				System.out.println("Enter command r for Game Commands");
 				System.out.println("Enter command u for User Commands");
 				System.out.println("Enter command f for Friend Commands");
-				System.out.println("Enter command L for Lists Commands");
+				System.out.println("Enter command l for Lists Commands");
 				System.out.print("Enter command or press x to exit: ");
 				command = this.reader.readLine();
 				switch (command) {
@@ -56,11 +64,6 @@ public class DatabaseAttempt {
 				    System.out.print("Enter command or press x to exit: ");
 					command = this.reader.readLine();
 					if(inputReaderIsX(command)) {break;}
-					String gameName ="";
-					String gameDesc="";
-					String gameGenre="";
-					String gameRelease="";
-					String gamePub="";
 					switch(command.toLowerCase()) {
 						case "creategame":
 							System.out.print("Enter the name of the game: ");
@@ -115,8 +118,8 @@ public class DatabaseAttempt {
 					  String r = this.reader.readLine();
 					  if(r.equals("C")){
 						  System.out.println("Please Enter Game Name: ");
-						  String gameName = this.reader.readLine();
-						  System.out.println("Please Enter Review \n");
+						  gameName = this.reader.readLine();
+						  System.out.println("Please Enter Review: \n");
 						  String review = this.reader.readLine();
 						  System.out.println("Please Enter Rating: ");
 						  String rating = this.reader.readLine();
@@ -124,11 +127,11 @@ public class DatabaseAttempt {
 						  ratingHandler.createRating(gameName, review, rate);
 					  }else if(r.equals("R")) {
 						  System.out.println("Please Enter Game Name: ");
-						  String gameName = this.reader.readLine();
+						  gameName = this.reader.readLine();
 						  ratingHandler.deleteRating(gameName);
 					  }else if(r.equals("U")) {
 						  System.out.println("Please Enter Game Name: ");
-						  String gameName = this.reader.readLine();
+						  gameName = this.reader.readLine();
 						  System.out.println("Please Enter Review \n");
 						  String review = this.reader.readLine();
 						  System.out.println("Please Enter Rating: ");
@@ -148,26 +151,68 @@ public class DatabaseAttempt {
 					  System.out.println("  (A) Add Friend");
 					  System.out.println("  (R) Remove Friend");
 					  System.out.print("  (B) Back \n Command: ");
-					  String r = this.reader.readLine();
-					  if(r.equals("V")) {
+					  command = this.reader.readLine();
+					  if(command.equals("V")) {
 						  ArrayList<String> friends = fl.readFriendsList();
 						  System.out.println("Friends: ");
 						  for(int i = 0; i < friends.size(); i++) System.out.println(friends.get(i));
-					  }else if(r.equals("A")){
+					  }else if(command.equals("A")){
 						  System.out.println("Please Enter Friend Name: ");
 						  String friendName = this.reader.readLine();
 						  fl.addFriend(friendName);
-					  }else if(r.equals("R")) {
+					  }else if(command.equals("R")) {
 						  System.out.println("Please Enter Friend Name: ");
 						  String name = this.reader.readLine();
 						  fl.removeFriend(name);
-					  }else if(r.equals("B")) {
+					  }else if(command.equals("B")) {
 						  break;
 					  }else {
 						  System.out.println("Invalid");
 					  }
 					  break;
-					  
+				  case "l":
+					  System.out.println("List Commands");
+					  System.out.println("  (GL) View Game Commands");
+					  System.out.println("  (CL) View Console Commands");
+					  command = this.reader.readLine().toLowerCase();
+					  if(inputReaderIsX(command)) {break;}
+					  switch(command) {
+					  	  case "gl":
+					  		  System.out.println("These are the Current Game lists: ");
+					  		  listHandler.readAllGameLists();
+					  		  System.out.println("Game List Commands");
+//							  System.out.println("  (ViewAllGameLists) View All Game Lists");
+							  System.out.println("  (ViewMyGameLists) View All Game Lists");
+							  System.out.println("  (CreateGameList) Create a Game List");
+							  System.out.println("  (EditGameList) Edit a Game on a List");
+							  System.out.println("  (RemoveGameList) Remove a Game from a List");
+							  System.out.println("  (DeleteGameList) Delete a Game List");
+							  command = this.reader.readLine();
+							  if(inputReaderIsX(command)) {break;}
+							  switch(command.toLowerCase()) {
+							  	case "viewallgamelists":
+							  		
+							  		break;
+							  	case "viewmygamelists":
+							  		listHandler.readUserLists();
+							  		break;
+							  	case "creategamelist":
+							  		System.out.print("Enter the name of the game list: ");
+									String listName = this.reader.readLine();
+							  		listHandler.createGameList(listName);
+							  		break;
+							  	case "editgamelist":
+							  		break;
+							  	case "removegamelist":
+							  		break;
+							  	case "deletedamelist":
+							  		break;
+							  }
+					  		  break;
+					  	  case "cl":
+					  		  break;
+					  }
+					  break;
 				  case "u":
 				    System.out.println("user");
 				    break;
