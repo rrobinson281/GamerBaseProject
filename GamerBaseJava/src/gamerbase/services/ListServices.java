@@ -99,7 +99,7 @@ public class ListServices {
 			e.printStackTrace();
 		}
 	}
-	public boolean createGameList(String listName) {
+	public boolean createList(String listName) {
 		if(listName.contentEquals("")) return false;
 		Connection con = dbCon.getConnection();
 		CallableStatement cs;
@@ -183,7 +183,7 @@ public class ListServices {
 		}
 		return false;
 	}
-	public boolean deleteGameList(String listName) {
+	public boolean deleteList(String listName) {
 		Connection con = dbCon.getConnection();
 		CallableStatement cs;
 		try {
@@ -256,4 +256,67 @@ public class ListServices {
 			e.printStackTrace();
 		}
 	}
+	
+	public boolean addConsoleToList(String listName, String consoleName, Map<String, Integer> consoleMap) {
+		int listId = ListIdMap.get(listName);
+		int consoleId = consoleMap.get(consoleName);
+		Connection con = dbCon.getConnection();
+		CallableStatement cs;
+		try {
+			cs = con.prepareCall("{? = call AddConsoleToList(?,?)}"); //
+			cs.registerOutParameter(1, Types.INTEGER);
+			cs.setInt(2, consoleId);
+			cs.setInt(3, listId);
+//			cs.setString(4, this.user);
+			cs.execute();
+			int value = cs.getInt(1);
+			if(value == 1) {
+				System.out.println("The listname given wasn't valid");
+				return false;
+			}
+			else if(value == 2) {
+				System.out.println("The console given must be in the consoles list");
+				return false;
+			}
+			else if(value == 3) {
+				System.out.println("Cannot add to other people's lists");
+				return false;
+			}
+			System.out.println("Console added sucessfully!");
+			System.out.println();
+			return true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public boolean removeConsoleFromList(String listName, String consoleName, Map<String,Integer> consoleMap) {
+		int listId = ListIdMap.get(listName);
+		int consoleId = consoleMap.get(consoleName);
+		Connection con = dbCon.getConnection();
+		CallableStatement cs;
+		try {
+			cs = con.prepareCall("{? = call RemoveConsoleFromList(?,?)}");
+			cs.registerOutParameter(1, Types.INTEGER);
+			cs.setInt(2, listId);
+			cs.setInt(3, consoleId);
+//			cs.setString(4, this.user);
+			cs.execute();
+			int value = cs.getInt(1);
+			if(value == 1) {
+				System.out.println("Console Must appear on the list to remove");
+				return false;
+			}
+			System.out.println("Console removed sucessfully!");
+			System.out.println();
+			return true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
 }

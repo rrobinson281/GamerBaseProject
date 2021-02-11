@@ -33,6 +33,7 @@ public class DatabaseAttempt {
 		if(this.reader.readLine().equals("Y")) {
 			ListServices listHandler = new ListServices(connection, user);
 			GameServices gameHandler = new GameServices(connection);
+			ConsoleServices consoleHandler = new ConsoleServices(connection);
 			OwnedListServices ownedListHandler = new OwnedListServices(connection, user);
 			FriendsList fl = new FriendsList(user, connection);
 			Ratings ratingHandler = new Ratings(user, connection);
@@ -206,7 +207,7 @@ public class DatabaseAttempt {
 							  	case "creategamelist":
 							  		System.out.print("Enter the name of the game list: ");
 									listName = this.reader.readLine();
-							  		listHandler.createGameList(listName);
+							  		listHandler.createList(listName);
 							  		gameHandler.ReadAllGames();
 							  		System.out.println("Add your first game!: ");
 							  		gameName = this.reader.readLine();
@@ -239,7 +240,7 @@ public class DatabaseAttempt {
 							  		listHandler.readUserLists();
 							  		System.out.println("Enter the Name of the list you want to Delete: ");
 							  		listName = this.reader.readLine();
-							  		listHandler.deleteGameList(listName);
+							  		listHandler.deleteList(listName);
 							  		break;
 							  }
 					  		  break;
