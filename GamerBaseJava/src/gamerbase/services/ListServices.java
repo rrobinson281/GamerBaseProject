@@ -201,4 +201,59 @@ public class ListServices {
 		}
 		return false;
 	}
+	
+	public void readAllConsoleLists() {
+		Connection con = this.dbCon.getConnection();
+		String queryString = "SELECT * From fn_GetConsoleLists()";
+		PreparedStatement stmt;
+		try {
+			stmt = con.prepareStatement(queryString);
+			ResultSet rs = stmt.executeQuery();
+			while(rs.next()) {
+				String listName = rs.getString(rs.findColumn("ListName"));
+				System.out.println(listName);
+			}
+			System.out.println();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void readUserConsoleLists() {
+		Connection con = this.dbCon.getConnection();
+		String queryString = "SELECT * From fn_UserConsoleLists(?)";
+		PreparedStatement stmt;
+		try {
+			stmt = con.prepareStatement(queryString);
+			stmt.setString(1, this.user);
+			ResultSet rs = stmt.executeQuery();
+			while(rs.next()) {
+				String listName = rs.getString(rs.findColumn("ListName"));
+				System.out.println(listName);
+			}
+			System.out.println();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void viewConsoleList(String listName) {
+		int listId = ListIdMap.get(listName);
+		Connection con = this.dbCon.getConnection();
+		String queryString = "SELECT * From fn_ViewConsoleLists(?)";
+		PreparedStatement stmt;
+		try {
+			stmt = con.prepareStatement(queryString);
+			stmt.setInt(1, listId);
+			ResultSet rs = stmt.executeQuery();
+			System.out.println(listName +": ");
+			while(rs.next()) {
+				String consoleName = rs.getString(rs.findColumn("ConsoleName"));
+				System.out.println(consoleName);
+			}
+			System.out.println();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }
