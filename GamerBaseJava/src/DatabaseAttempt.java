@@ -181,13 +181,15 @@ public class DatabaseAttempt {
 					  		  System.out.println("These are the Current Game lists: ");
 					  		  listHandler.readAllGameLists();
 					  		  System.out.println("Game List Commands");
-//							  System.out.println("  (ViewAllGameLists) View All Game Lists");
-							  System.out.println("  (ViewMyGameLists) View All Game Lists");
+							  System.out.println("  (ViewSpecificList) View A specific Game");
+							  System.out.println("  (ViewMyGameLists) View Your Game Lists");
 							  System.out.println("  (CreateGameList) Create a Game List");
+							  System.out.println("  (AddGameToList) Add a Game to a List");
 							  System.out.println("  (EditGameList) Edit a Game on a List");
 							  System.out.println("  (RemoveGameList) Remove a Game from a List");
 							  System.out.println("  (DeleteGameList) Delete a Game List");
 							  command = this.reader.readLine();
+							  String listName = "";
 							  if(inputReaderIsX(command)) {break;}
 							  switch(command.toLowerCase()) {
 							  	case "viewallgamelists":
@@ -196,10 +198,29 @@ public class DatabaseAttempt {
 							  	case "viewmygamelists":
 							  		listHandler.readUserLists();
 							  		break;
+							  	case "viewspecificlist":
+							  		System.out.println("Enter the name of the list you want to view: ");
+							  		listName = this.reader.readLine();
+							  		listHandler.viewGameList(listName);
+							  		break;
 							  	case "creategamelist":
 							  		System.out.print("Enter the name of the game list: ");
-									String listName = this.reader.readLine();
+									listName = this.reader.readLine();
 							  		listHandler.createGameList(listName);
+							  		gameHandler.ReadAllGames();
+							  		System.out.println("Add your first game!: ");
+							  		gameName = this.reader.readLine();
+							  		listHandler.addGameToList(listName, gameName, gameHandler.getGameMap());
+							  		break;
+							  	case "addgametolist":
+							  		System.out.println("Your Lists: ");
+							  		listHandler.readUserLists();
+							  		System.out.println("Enter the Name of the list you want to add a game to?");
+							  		listName = this.reader.readLine();
+							  		gameHandler.ReadAllGames();
+							  		System.out.println("Enter the name of the Game you want to add");
+							  		gameName = this.reader.readLine();
+							  		listHandler.addGameToList(listName, gameName, gameHandler.getGameMap());
 							  		break;
 							  	case "editgamelist":
 							  		break;

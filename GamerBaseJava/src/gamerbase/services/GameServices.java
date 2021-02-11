@@ -134,4 +134,7 @@ public class GameServices {
 		}
 		return false;
 	}
+	public Map<String, Integer> getGameMap(){
+		return GameIdMap;
+	}
 }
