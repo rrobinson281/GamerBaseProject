@@ -129,11 +129,11 @@ public class ListServices {
 		Connection con = dbCon.getConnection();
 		CallableStatement cs;
 		try {
-			cs = con.prepareCall("{? = call AddGameToList(?,?,?)}");
+			cs = con.prepareCall("{? = call AddGameToList(?,?)}");
 			cs.registerOutParameter(1, Types.INTEGER);
 			cs.setInt(2, listId);
 			cs.setInt(3, gameId);
-			cs.setString(4, this.user);
+//			cs.setString(4, this.user);
 			cs.execute();
 			int value = cs.getInt(1);
 			if(value == 1) {
@@ -149,6 +149,50 @@ public class ListServices {
 				return false;
 			}
 			System.out.println("Game added sucessfully!");
+			System.out.println();
+			return true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
+	public boolean removeGameFromList(String listName, String gameName, Map<String,Integer> gameMap) {
+		int listId = ListIdMap.get(listName);
+		int gameId = gameMap.get(gameName);
+		Connection con = dbCon.getConnection();
+		CallableStatement cs;
+		try {
+			cs = con.prepareCall("{? = call RemoveGameFromList(?,?)}");
+			cs.registerOutParameter(1, Types.INTEGER);
+			cs.setInt(2, listId);
+			cs.setInt(3, gameId);
+//			cs.setString(4, this.user);
+			cs.execute();
+			int value = cs.getInt(1);
+			if(value == 1) {
+				System.out.println("Game Must appear on the list to remove");
+				return false;
+			}
+			System.out.println("Game removed sucessfully!");
+			System.out.println();
+			return true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
+	public boolean deleteGameList(String listName) {
+		Connection con = dbCon.getConnection();
+		CallableStatement cs;
+		try {
+			cs = con.prepareCall("{? = call DeleteList(?)}");
+			cs.registerOutParameter(1, Types.INTEGER);
+			cs.setString(2, listName);
+			cs.execute();
+			ListIdMap.remove(listName);
+			System.out.println("List removed sucessfully!");
 			System.out.println();
 			return true;
 		} catch (SQLException e) {

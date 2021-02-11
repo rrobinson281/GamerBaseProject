@@ -185,7 +185,7 @@ public class DatabaseAttempt {
 							  System.out.println("  (ViewMyGameLists) View Your Game Lists");
 							  System.out.println("  (CreateGameList) Create a Game List");
 							  System.out.println("  (AddGameToList) Add a Game to a List");
-							  System.out.println("  (EditGameList) Edit a Game on a List");
+//							  System.out.println("  (EditGameList) Edit a Game on a List");
 							  System.out.println("  (RemoveGameList) Remove a Game from a List");
 							  System.out.println("  (DeleteGameList) Delete a Game List");
 							  command = this.reader.readLine();
@@ -225,8 +225,21 @@ public class DatabaseAttempt {
 							  	case "editgamelist":
 							  		break;
 							  	case "removegamelist":
+							  		System.out.println("Your Lists: ");
+							  		listHandler.readUserLists();
+							  		System.out.println("Enter the Name of the list you want to remove a game from: ");
+							  		listName = this.reader.readLine();
+							  		gameHandler.ReadAllGames();
+							  		System.out.println("Enter the name of the Game you want to remove");
+							  		gameName = this.reader.readLine();
+							  		listHandler.removeGameFromList(listName, gameName, gameHandler.getGameMap());
 							  		break;
-							  	case "deletedamelist":
+							  	case "deletegamelist":
+							  		System.out.println("Your Lists: ");
+							  		listHandler.readUserLists();
+							  		System.out.println("Enter the Name of the list you want to Delete: ");
+							  		listName = this.reader.readLine();
+							  		listHandler.deleteGameList(listName);
 							  		break;
 							  }
 					  		  break;
