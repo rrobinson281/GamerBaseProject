@@ -184,12 +184,13 @@ public class ListServices {
 		return false;
 	}
 	public boolean deleteList(String listName) {
+		int listId = ListIdMap.get(listName);
 		Connection con = dbCon.getConnection();
 		CallableStatement cs;
 		try {
 			cs = con.prepareCall("{? = call DeleteList(?)}");
 			cs.registerOutParameter(1, Types.INTEGER);
-			cs.setString(2, listName);
+			cs.setInt(2, listId);
 			cs.execute();
 			ListIdMap.remove(listName);
 			System.out.println("List removed sucessfully!");
@@ -259,6 +260,7 @@ public class ListServices {
 	
 	public boolean addConsoleToList(String listName, String consoleName, Map<String, Integer> consoleMap) {
 		int listId = ListIdMap.get(listName);
+		System.out.println(consoleMap.toString());
 		int consoleId = consoleMap.get(consoleName);
 		Connection con = dbCon.getConnection();
 		CallableStatement cs;

@@ -17,7 +17,7 @@ public class ConsoleServices {
 		this.dbService = dbCon;
 		ConsoleIdMap = new HashMap<>();
 		Connection con = dbService.getConnection();
-		String queryString = "SELECT Name From Game";
+		String queryString = "SELECT Name From Console";
 		PreparedStatement stmt;
 		try {
 			stmt = con.prepareStatement(queryString);
@@ -30,6 +30,7 @@ public class ConsoleServices {
 				cs.execute();
 				ConsoleIdMap.put(consoleName, cs.getInt(1));
 			}
+			System.out.println(ConsoleIdMap.toString());
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

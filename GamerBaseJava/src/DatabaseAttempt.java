@@ -231,7 +231,8 @@ public class DatabaseAttempt {
 							  		listHandler.readUserLists();
 							  		System.out.println("Enter the Name of the list you want to remove a game from: ");
 							  		listName = this.reader.readLine();
-							  		gameHandler.ReadAllGames();
+//							  		gameHandler.ReadAllGames();
+							  		listHandler.viewGameList(listName);
 							  		System.out.println("Enter the name of the Game you want to remove");
 							  		gameName = this.reader.readLine();
 							  		listHandler.removeGameFromList(listName, gameName, gameHandler.getGameMap());
@@ -297,7 +298,8 @@ public class DatabaseAttempt {
 							  		listHandler.readUserConsoleLists();
 							  		System.out.println("Enter the Name of the list you want to remove a console from: ");
 							  		listName = this.reader.readLine();
-							  		consoleHandler.ReadAllConsoles();
+							  		listHandler.viewConsoleList(listName);
+//							  		consoleHandler.ReadAllConsoles();
 							  		System.out.println("Enter the name of the Console you want to remove");
 							  		consoleName = this.reader.readLine();
 							  		listHandler.removeConsoleFromList(listName, consoleName, consoleHandler.getGameMap());
