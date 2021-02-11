@@ -27,7 +27,7 @@ public class DatabaseConnectionService {
 				.replace("${pass}", pass);
 		
 		try {
-			connection = DriverManager.getConnection(fullUrl);
+			this.connection = DriverManager.getConnection(fullUrl);
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
