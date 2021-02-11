@@ -37,6 +37,7 @@ public class DatabaseAttempt {
 			OwnedListServices ownedListHandler = new OwnedListServices(connection, user);
 			FriendsList fl = new FriendsList(user, connection);
 			Ratings ratingHandler = new Ratings(user, connection);
+			ProfileManagement p = new ProfileManagement(user, connection);
 			while(true) {
 				String gameName ="";
 				String consoleName = "";
@@ -50,6 +51,7 @@ public class DatabaseAttempt {
 				System.out.println("Enter command u for User Commands");
 				System.out.println("Enter command f for Friend Commands");
 				System.out.println("Enter command l for Lists Commands");
+				System.out.println("Enter command p for Profile Commands");
 				System.out.print("Enter command or press x to exit: ");
 				command = this.reader.readLine();
 				switch (command) {
@@ -319,7 +321,6 @@ public class DatabaseAttempt {
 				    System.out.println("user");
 				    break;
 				  case "p":
-					  ProfileManagement p = new ProfileManagement(username, connection);
 					  System.out.println("(V) View Profiles");
 					  System.out.println("(A) Add Profile");
 					  System.out.println("(D) Delete Profile");
@@ -328,7 +329,6 @@ public class DatabaseAttempt {
 					  command = command.toLowerCase();
 					  switch(command) {
 					  	case("v"):
-					  		System.out.println("Viewing profile");
 					  		p.viewProfile();
 					  		break;
 					  	case("a"):
