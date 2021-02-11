@@ -39,6 +39,7 @@ public class DatabaseAttempt {
 			Ratings ratingHandler = new Ratings(user, connection);
 			while(true) {
 				String gameName ="";
+				String consoleName = "";
 				String gameDesc="";
 				String gameGenre="";
 				String gameRelease="";
@@ -245,6 +246,70 @@ public class DatabaseAttempt {
 							  }
 					  		  break;
 					  	  case "cl":
+					  		System.out.println("These are the Current Console lists: ");
+					  		  listHandler.readAllConsoleLists();
+					  		  System.out.println("Console List Commands");
+							  System.out.println("  (ViewSpecificList) View A specific Console");
+							  System.out.println("  (ViewMyConsoleLists) View Your Console Lists");
+							  System.out.println("  (CreateConsoleList) Create a Console List");
+							  System.out.println("  (AddConsoleToList) Add a Console to a List");
+//							  System.out.println("  (EditConsoleList) Edit a Console on a List");
+							  System.out.println("  (RemoveConsoleList) Remove a Console from a List");
+							  System.out.println("  (DeleteConsoleList) Delete a Console List");
+							  command = this.reader.readLine();
+							  listName = "";
+							  if(inputReaderIsX(command)) {break;}
+							  switch(command.toLowerCase()) {
+							  	case "viewallconsolelists":
+							  		
+							  		break;
+							  	case "viewmyconsolelists":
+							  		listHandler.readUserConsoleLists();
+							  		break;
+							  	case "viewspecificlist":
+							  		System.out.println("Enter the name of the list you want to view: ");
+							  		listName = this.reader.readLine();
+							  		listHandler.viewConsoleList(listName);
+							  		break;
+							  	case "createconsolelist":
+							  		System.out.print("Enter the name of the console list: ");
+									listName = this.reader.readLine();
+							  		listHandler.createList(listName);
+							  		consoleHandler.ReadAllConsoles();
+							  		System.out.println("Add your first console!: ");
+							  		consoleName = this.reader.readLine();
+							  		listHandler.addConsoleToList(listName, consoleName, consoleHandler.getGameMap());
+							  		break;
+							  	case "addconsoletolist":
+							  		System.out.println("Your Lists: ");
+							  		listHandler.readUserConsoleLists();
+							  		System.out.println("Enter the Name of the list you want to add a console to?");
+							  		listName = this.reader.readLine();
+							  		consoleHandler.ReadAllConsoles();
+							  		System.out.println("Enter the name of the Console you want to add");
+							  		consoleName = this.reader.readLine();
+							  		listHandler.addConsoleToList(listName, consoleName, consoleHandler.getGameMap());
+							  		break;
+							  	case "editconsolelist":
+							  		break;
+							  	case "removeconsolelist":
+							  		System.out.println("Your Lists: ");
+							  		listHandler.readUserConsoleLists();
+							  		System.out.println("Enter the Name of the list you want to remove a console from: ");
+							  		listName = this.reader.readLine();
+							  		consoleHandler.ReadAllConsoles();
+							  		System.out.println("Enter the name of the Console you want to remove");
+							  		consoleName = this.reader.readLine();
+							  		listHandler.removeConsoleFromList(listName, consoleName, consoleHandler.getGameMap());
+							  		break;
+							  	case "deleteconsolelist":
+							  		System.out.println("Your Lists: ");
+							  		listHandler.readUserConsoleLists();
+							  		System.out.println("Enter the Name of the list you want to Delete: ");
+							  		listName = this.reader.readLine();
+							  		listHandler.deleteList(listName);
+							  		break;
+							  }
 					  		  break;
 					  }
 					  break;
