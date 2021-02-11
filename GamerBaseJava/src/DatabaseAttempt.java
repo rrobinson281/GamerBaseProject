@@ -318,6 +318,46 @@ public class DatabaseAttempt {
 				  case "u":
 				    System.out.println("user");
 				    break;
+				  case "p":
+					  ProfileManagement p = new ProfileManagement(username, connection);
+					  System.out.println("(V) View Profiles");
+					  System.out.println("(A) Add Profile");
+					  System.out.println("(D) Delete Profile");
+					  System.out.println("(E) Edit Profile");
+					  String command = this.reader.readLine();
+					  command = command.toLowerCase();
+					  switch(command) {
+					  	case("v"):
+					  		System.out.println("Viewing profile");
+					  		p.viewProfile();
+					  		break;
+					  	case("a"):
+					  		System.out.println("Please Enter Profile Type (Ex. Twitch, Playstation, etc.): ");
+					  		String type = this.reader.readLine();
+					  		System.out.println("Please Enter Profile Name: ");
+					  		String name = this.reader.readLine();
+					  		p.addProfile(type, name);
+					  		break;
+					  	case("d"):
+					  		System.out.println("Please Enter Profile Type (Ex. Twitch, Playstation, etc.): ");
+					  		type = this.reader.readLine();
+					  		System.out.println("Please Enter Profile Name: ");
+					  		name = this.reader.readLine();
+					  		p.deleteProfile(name, type);
+					  		break;
+					  	case("e"):
+					  		System.out.println("Please Enter Current Profile Type (Ex. Twitch, Playstation, etc.): ");
+					  		type = this.reader.readLine();
+					  		System.out.println("Please Enter Current Profile Name: ");
+					  		name = this.reader.readLine();
+					  		System.out.println("Please Enter New Profile Type (Leave null if no change): ");
+					  		String newType = this.reader.readLine();
+					  		System.out.println("Please Enter New Profile Name: (Leave null if no change): ");
+					  		String newName = this.reader.readLine();
+					  		p.editProfile(name, type, newType, newName);
+					  		break;
+					  		}
+					  break;
 				  case "x":
 				    System.out.println("exit");
 				    break;
