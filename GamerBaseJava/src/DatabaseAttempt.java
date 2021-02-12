@@ -47,7 +47,7 @@ public class DatabaseAttempt {
 				String gamePub="";
 				System.out.println();
 				System.out.println("Enter command g for Game Commands");
-				System.out.println("Enter command r for Game Commands");
+				System.out.println("Enter command r for Rating Commands");
 				System.out.println("Enter command u for User Commands");
 				System.out.println("Enter command f for Friend Commands");
 				System.out.println("Enter command l for Lists Commands");
@@ -119,8 +119,9 @@ public class DatabaseAttempt {
 					  System.out.println("   (C) Create Rating");
 					  System.out.println("   (R) Remove Rating");
 					  System.out.println("   (U) Update Rating");
-					  String r = this.reader.readLine();
-					  if(r.equals("C")){
+					  System.out.println("   (V) View Ratings");
+					  String r = this.reader.readLine().toLowerCase();
+					  if(r.equals("c")){
 						  System.out.println("Please Enter Game Name: ");
 						  gameName = this.reader.readLine();
 						  System.out.println("Please Enter Review: \n");
@@ -129,20 +130,27 @@ public class DatabaseAttempt {
 						  String rating = this.reader.readLine();
 						  float rate = Float.parseFloat(rating);
 						  ratingHandler.createRating(gameName, review, rate);
-					  }else if(r.equals("R")) {
+					  }else if(r.equals("r")) {
+						  System.out.println("Your Reviews");
+						  ratingHandler.readUserRatings(user);
 						  System.out.println("Please Enter Game Name: ");
 						  gameName = this.reader.readLine();
 						  ratingHandler.deleteRating(gameName);
-					  }else if(r.equals("U")) {
+					  }else if(r.equals("u")) {
+						  System.out.println("Your Reviews");
+						  ratingHandler.readUserRatings(user);
 						  System.out.println("Please Enter Game Name: ");
 						  gameName = this.reader.readLine();
-						  System.out.println("Please Enter Review \n");
+						  System.out.println("Please Enter New Review (leave empty if no change) \n");
 						  String review = this.reader.readLine();
-						  System.out.println("Please Enter Rating: ");
+						  System.out.println("Please Enter New Rating (leave empty if no change): ");
 						  String rating = this.reader.readLine();
 						  float rate = Float.parseFloat(rating);
 						  ratingHandler.updateRating(gameName, review, rate);
 						  break;
+					  }
+					  else if(r.equals("v")){
+						  ratingHandler.readRatings();
 					  }else {
 						  System.out.println("Invalid");
 					  }
@@ -155,20 +163,23 @@ public class DatabaseAttempt {
 					  System.out.println("  (A) Add Friend");
 					  System.out.println("  (R) Remove Friend");
 					  System.out.print("  (B) Back \n Command: ");
-					  command = this.reader.readLine();
-					  if(command.equals("V")) {
+					  command = this.reader.readLine().toLowerCase();
+					  if(command.equals("v")) {
 						  ArrayList<String> friends = fl.readFriendsList();
 						  System.out.println("Friends: ");
 						  for(int i = 0; i < friends.size(); i++) System.out.println(friends.get(i));
-					  }else if(command.equals("A")){
+					  }else if(command.equals("a")){
 						  System.out.println("Please Enter Friend Name: ");
 						  String friendName = this.reader.readLine();
 						  fl.addFriend(friendName);
-					  }else if(command.equals("R")) {
+					  }else if(command.equals("r")) {
+						  System.out.println("Current friends: ");
+						  ArrayList<String> friends = fl.readFriendsList();
+						  for(int i = 0; i < friends.size(); i++) System.out.println(friends.get(i));
 						  System.out.println("Please Enter Friend Name: ");
 						  String name = this.reader.readLine();
 						  fl.removeFriend(name);
-					  }else if(command.equals("B")) {
+					  }else if(command.equals("b")) {
 						  break;
 					  }else {
 						  System.out.println("Invalid");
@@ -333,6 +344,7 @@ public class DatabaseAttempt {
 					  		p.viewProfile();
 					  		break;
 					  	case("f"):
+					  		p.viewUsers();
 					  		System.out.println("Please Enter Their Username: ");
 					  		String friend = this.reader.readLine();
 					  		p.viewFriendProfile(friend);
@@ -352,6 +364,8 @@ public class DatabaseAttempt {
 					  		p.deleteProfile(name, type);
 					  		break;
 					  	case("e"):
+					  		System.out.println("Your current profiles: ");
+					  		p.viewFriendProfile(user);
 					  		System.out.println("Please Enter Current Profile Type (Ex. Twitch, Playstation, etc.): ");
 					  		type = this.reader.readLine();
 					  		System.out.println("Please Enter Current Profile Name: ");

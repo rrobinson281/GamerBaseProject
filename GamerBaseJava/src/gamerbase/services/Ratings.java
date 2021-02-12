@@ -1,6 +1,7 @@
 package gamerbase.services;
 
 import java.sql.CallableStatement;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -86,6 +87,47 @@ public class Ratings {
 	}
 	
 	public void readRatings() {
-		
+		Connection con = dbService.getConnection();
+		String queryString = "SELECT * From ReadRatings";
+		PreparedStatement stmt;
+		try {
+			stmt = con.prepareStatement(queryString);
+			ResultSet rs = stmt.executeQuery();
+			while(rs.next()) {
+				String ratingUser = rs.getString(rs.findColumn("RatingUser"));
+				String gameName = rs.getString(rs.findColumn("GameName"));
+				String review = rs.getString(rs.findColumn("Review"));
+				Double rating = rs.getDouble(rs.findColumn("Rating"));
+				System.out.println(ratingUser + " reviewed: " + gameName + ": ");
+				System.out.println("\t Review: " + review);
+				System.out.println("Rating: " + rating);
+				System.out.println();
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	public void readUserRatings(String user) {
+		Connection con = dbService.getConnection();
+		String queryString = "SELECT * From fn_UserReviews(?)";
+		PreparedStatement stmt;
+		try {
+			stmt = con.prepareStatement(queryString);
+			stmt.setString(1, user);
+			ResultSet rs = stmt.executeQuery();
+			while(rs.next()) {
+				String gameName = rs.getString(rs.findColumn("GameName"));
+				String review = rs.getString(rs.findColumn("Review"));
+				Double rating = rs.getDouble(rs.findColumn("Rating"));
+				System.out.println(gameName + ": ");
+				System.out.println("\t Review: " + review);
+				System.out.println("Rating: " + rating);
+				System.out.println();
+			}
+			System.out.println();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }

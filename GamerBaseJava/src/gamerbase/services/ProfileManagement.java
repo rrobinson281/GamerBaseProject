@@ -1,6 +1,8 @@
 package gamerbase.services;
 
 import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -32,16 +34,37 @@ public class ProfileManagement {
 		}
 		System.out.println("You own "+profile.size()/3+" profile(s).");//prints number of profiles owned
 		for(int i = 0; i < profile.size(); i+=3) {//loops when user has multiple profiles
-			System.out.println("Username:      "+profile.get(0 + i));
+			System.out.println("Username:      "+profile.get(2 + i));
 			System.out.println("ProfileType:   "+profile.get(1 + i));
-			System.out.println("OwnerUsername: "+profile.get(2 + i));
+//			System.out.println("OwnerUsername: "+);
+		}
+	}
+	
+	public void viewUsers() {
+		Connection con = dbService.getConnection();
+		String queryString = "SELECT * From [User]";
+		PreparedStatement stmt;
+		try {
+			stmt = con.prepareStatement(queryString);
+			ResultSet rs = stmt.executeQuery();
+			while(rs.next()) {
+				System.out.println(rs.getString(rs.findColumn("Username")));
+			}
+			System.out.println();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 	}
 	
 	public void viewFriendProfile(String friendUsername) {
 		ArrayList<String> profile = new ArrayList<String>();
-		String query = "SELECT * FROM fn_UserProfiles('"+friendUsername+"')";
-		try (Statement stmt = dbService.getConnection().createStatement()){
+//		String query = "SELECT * FROM fn_UserProfiles('"+friendUsername+"')";
+		Connection con = dbService.getConnection();
+		String query = "SELECT * FROM fn_UserProfiles(?)";
+		PreparedStatement stmt;
+		try{
+			stmt = con.prepareStatement(query);
+			stmt.setString(1, friendUsername);
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next()) {//loops in case of multiply profiles owned by user
 				profile.add(rs.getString("OwnerUsername"));
@@ -52,11 +75,11 @@ public class ProfileManagement {
 			System.out.println("Profile fetch failed");
 			//e.printStackTrace();
 		}
-		System.out.println("You own "+profile.size()/3+" profile(s).");//prints number of profiles owned
+		System.out.println(profile.size()/3+" profile(s).");//prints number of profiles owned
 		for(int i = 0; i < profile.size(); i+=3) {//loops when user has multiple profiles
-			System.out.println("Username:      "+profile.get(0 + i));
+			System.out.println("Username:      "+profile.get(2 + i));
 			System.out.println("ProfileType:   "+profile.get(1 + i));
-			System.out.println("OwnerUsername: "+profile.get(2 + i));
+//			System.out.println("OwnerUsername: "+);
 		}
 	}
 	public void addProfile(String profileType, String profileName) {
@@ -121,8 +144,14 @@ public class ProfileManagement {
 	
 	public int findID(String profileName, String profileType) {
 		int id = 0;
-		String query = "SELECT * FROM fn_FetchProfileID('"+this.username+"','"+profileType+"', '"+profileName+"')";
-		try (Statement stmt = dbService.getConnection().createStatement()){
+		Connection con = dbService.getConnection();
+		String query = "SELECT * FROM fn_FetchProfileID(?,?,?)";
+		PreparedStatement stmt;
+		try{
+			stmt = con.prepareStatement(query);
+			stmt.setString(1, this.username);
+			stmt.setString(2, profileType);
+			stmt.setString(2, profileName);
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next()) {
 				id = rs.getInt("ID");
