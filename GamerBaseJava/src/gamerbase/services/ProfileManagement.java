@@ -29,8 +29,9 @@ public class ProfileManagement {
 				profile.add(rs.getString("ProfileName"));
 			}
 		} catch (SQLException e) {
+			System.out.println("viewProfile() fail");
 			System.out.println("Profile fetch failed");
-			//e.printStackTrace();
+			e.printStackTrace();
 		}
 		System.out.println("You own "+profile.size()/3+" profile(s).");//prints number of profiles owned
 		for(int i = 0; i < profile.size(); i+=3) {//loops when user has multiple profiles
@@ -65,15 +66,16 @@ public class ProfileManagement {
 		try{
 			stmt = con.prepareStatement(query);
 			stmt.setString(1, friendUsername);
-			ResultSet rs = stmt.executeQuery(query);
+			ResultSet rs = stmt.executeQuery();
 			while(rs.next()) {//loops in case of multiply profiles owned by user
 				profile.add(rs.getString("OwnerUsername"));
 				profile.add(rs.getString("ProfileType"));
 				profile.add(rs.getString("ProfileName"));
 			}
 		} catch (SQLException e) {
+			System.out.println("viewFriendProfileFail");
 			System.out.println("Profile fetch failed");
-			//e.printStackTrace();
+			e.printStackTrace();
 		}
 		System.out.println(profile.size()/3+" profile(s).");//prints number of profiles owned
 		for(int i = 0; i < profile.size(); i+=3) {//loops when user has multiple profiles
@@ -151,14 +153,15 @@ public class ProfileManagement {
 			stmt = con.prepareStatement(query);
 			stmt.setString(1, this.username);
 			stmt.setString(2, profileType);
-			stmt.setString(2, profileName);
-			ResultSet rs = stmt.executeQuery(query);
+			stmt.setString(3, profileName);
+			ResultSet rs = stmt.executeQuery();
 			while(rs.next()) {
 				id = rs.getInt("ID");
 			}
 		} catch (SQLException e) {
+			System.out.println("findID failed");
 			System.out.println("Profile fetch failed");
-			//e.printStackTrace();
+			e.printStackTrace();
 		}
 		return id;
 	}

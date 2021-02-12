@@ -29,7 +29,7 @@ public class ListServices {
 				ListIdMap.put(listName,listID);
 			}
 			
-			System.out.println(ListIdMap.toString());
+//			System.out.println(ListIdMap.toString());
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

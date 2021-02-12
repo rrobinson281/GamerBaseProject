@@ -30,7 +30,7 @@ public class ConsoleServices {
 				cs.execute();
 				ConsoleIdMap.put(consoleName, cs.getInt(1));
 			}
-			System.out.println(ConsoleIdMap.toString());
+//			System.out.println(ConsoleIdMap.toString());
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
