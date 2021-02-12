@@ -322,6 +322,7 @@ public class DatabaseAttempt {
 				    break;
 				  case "p":
 					  System.out.println("(V) View Profiles");
+					  System.out.println("(F) View Other Profiles");
 					  System.out.println("(A) Add Profile");
 					  System.out.println("(D) Delete Profile");
 					  System.out.println("(E) Edit Profile");
@@ -330,6 +331,11 @@ public class DatabaseAttempt {
 					  switch(command) {
 					  	case("v"):
 					  		p.viewProfile();
+					  		break;
+					  	case("f"):
+					  		System.out.println("Please Enter Their Username: ");
+					  		String friend = this.reader.readLine();
+					  		p.viewFriendProfile(friend);
 					  		break;
 					  	case("a"):
 					  		System.out.println("Please Enter Profile Type (Ex. Twitch, Playstation, etc.): ");

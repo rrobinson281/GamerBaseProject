@@ -30,7 +30,7 @@ public class ProfileManagement {
 			System.out.println("Profile fetch failed");
 			//e.printStackTrace();
 		}
-		System.out.println("You own "+profile.size()/3+" profiles.");//prints number of profiles owned
+		System.out.println("You own "+profile.size()/3+" profile(s).");//prints number of profiles owned
 		for(int i = 0; i < profile.size(); i+=3) {//loops when user has multiple profiles
 			System.out.println("Username:      "+profile.get(0 + i));
 			System.out.println("ProfileType:   "+profile.get(1 + i));
@@ -38,6 +38,27 @@ public class ProfileManagement {
 		}
 	}
 	
+	public void viewFriendProfile(String friendUsername) {
+		ArrayList<String> profile = new ArrayList<String>();
+		String query = "SELECT * FROM fn_UserProfiles('"+friendUsername+"')";
+		try (Statement stmt = dbService.getConnection().createStatement()){
+			ResultSet rs = stmt.executeQuery(query);
+			while(rs.next()) {//loops in case of multiply profiles owned by user
+				profile.add(rs.getString("OwnerUsername"));
+				profile.add(rs.getString("ProfileType"));
+				profile.add(rs.getString("ProfileName"));
+			}
+		} catch (SQLException e) {
+			System.out.println("Profile fetch failed");
+			//e.printStackTrace();
+		}
+		System.out.println("You own "+profile.size()/3+" profile(s).");//prints number of profiles owned
+		for(int i = 0; i < profile.size(); i+=3) {//loops when user has multiple profiles
+			System.out.println("Username:      "+profile.get(0 + i));
+			System.out.println("ProfileType:   "+profile.get(1 + i));
+			System.out.println("OwnerUsername: "+profile.get(2 + i));
+		}
+	}
 	public void addProfile(String profileType, String profileName) {
 		CallableStatement add = null;
 		try {
