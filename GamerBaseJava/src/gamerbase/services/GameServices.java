@@ -20,8 +20,8 @@ public class GameServices {
 		GameIdMap = new HashMap<>();
 		PublisherIdMap =new HashMap<>();
 		Connection con = dbService.getConnection();
-		String queryString = "SELECT Name From Game";
-		String queryString2 = "select Name from Publisher";
+		String queryString = "SELECT * From Game";
+		String queryString2 = "select * from Publisher";
 		PreparedStatement stmt;
 		try {
 			stmt = con.prepareStatement(queryString);
@@ -29,7 +29,8 @@ public class GameServices {
 			int index = 0;
 			while(rs.next()) {
 				String gameName = rs.getString(rs.findColumn("name"));
-				GameIdMap.put(gameName, index);
+				int id = rs.getInt(rs.findColumn("ID"));
+				GameIdMap.put(gameName, id);
 				index++;
 			}
 		} catch (SQLException e) {
@@ -41,7 +42,7 @@ public class GameServices {
 			int index = 0;
 			while(rs.next()) {
 				String publisherName = rs.getString(rs.findColumn("name"));
-				PublisherIdMap.put(publisherName, index);
+				PublisherIdMap.put(publisherName, rs.getInt(rs.findColumn("ID")));
 				index++;
 			}
 		} catch (SQLException e) {
@@ -51,7 +52,7 @@ public class GameServices {
 
 	public void ReadAllGames() {
 		Connection con = dbService.getConnection();
-		String queryString = "SELECT Name From Game";
+		String queryString = "SELECT * From Game";
 		PreparedStatement stmt;
 		try {
 			stmt = con.prepareStatement(queryString);
@@ -100,7 +101,10 @@ public class GameServices {
 	}
 	
 	public boolean CreateGame(String name, String description, String genre, String releaseDate, String Publisher) {
-		Integer pubID = Publisher.equals("") ? PublisherIdMap.get("null") :PublisherIdMap.get(Publisher);
+		Integer pubID = Publisher.equals("") ? null :PublisherIdMap.get(Publisher);
+		if(pubID == null) {
+			System.out.println("Publisher entered incorrectly or not in game list");
+		}
 		description = description.equals("") ? null : description;
 		genre = genre.equals("") ? null : genre;
 		releaseDate = releaseDate.equals("") ? null : releaseDate;
@@ -124,12 +128,50 @@ public class GameServices {
 				System.out.println("Publisher has to be an existing publisher or null.");
 				return false;
 			}
-			GameIdMap.put(name, GameIdMap.size());
+			cs = con.prepareCall("{? = call fn_GetGameID(?)}");
+			cs.registerOutParameter(1, Types.INTEGER);
+			cs.setString(2, name);
+			cs.execute();
+			GameIdMap.put(name, cs.getInt(1));
+//			GameIdMap.put(name, GameIdMap.size());
 			System.out.println("Game added sucessfully!");
 			System.out.println();
 			return true;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
+	public boolean EditGame(String gameName, String newName, String newDesc, String newGenre, String newRelease, String newPub) {
+		Integer gameID = GameIdMap.get(gameName);
+		Integer pubID = newPub.equals("") ? PublisherIdMap.get("null") :PublisherIdMap.get(newPub);
+		newDesc = newDesc.equals("") ? null : newDesc;
+		newGenre = newGenre.equals("") ? null : newGenre;
+		newRelease = newRelease.equals("") ? null : newRelease;
+		if(gameID == null) {
+			System.out.println("Game Name entered incorrectly or not in game list");
+			return false;
+		}
+		if(pubID == null) {
+			System.out.println("Publisher entered incorrectly or not in game list");
+		}
+		CallableStatement stmt;
+		try {
+			stmt = dbService.getConnection().prepareCall("{? = call UpdateGame(?, ?, ?, ?, ?, ?)}");
+			stmt.setInt(2, gameID);
+			stmt.setString(3, newName);
+			stmt.setString(4, newDesc);
+			stmt.setString(5, newGenre);
+			stmt.setString(6, newRelease);
+			stmt.setInt(7, pubID);
+			stmt.executeUpdate();
+			int value = stmt.getInt(1);
+			if(value == 1) {
+				System.out.println("GameName cannot be empty.");
+				return false;
+			}
+		}catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return false;

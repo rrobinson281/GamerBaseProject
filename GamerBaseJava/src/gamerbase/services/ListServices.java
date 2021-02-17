@@ -28,23 +28,9 @@ public class ListServices {
 				int listID = rs.getInt(rs.findColumn("ID"));
 				ListIdMap.put(listName,listID);
 			}
-			
-//			System.out.println(ListIdMap.toString());
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-//		 queryString = "SELECT * From fn_GetConsoleLists()";
-//			try {
-//				stmt = con.prepareStatement(queryString);
-//				ResultSet rs = stmt.executeQuery();
-//				while(rs.next()) {
-//					String listName = rs.getString(rs.findColumn("ListName"));
-//					int listID = rs.getInt(rs.findColumn("ListID"));
-//					ListIdMap.put(listName,listID);
-//				}
-//			} catch (SQLException e) {
-//				e.printStackTrace();
-//			}
 	}
 	
 	public void readAllGameLists() {
@@ -81,7 +67,11 @@ public class ListServices {
 		}
 	}
 	public void viewGameList(String listName) {
-		int listId = ListIdMap.get(listName);
+		Integer listId = ListIdMap.get(listName);
+		if(listId == null) {
+			System.out.println("List name entered incorrectly or not in list");
+			return;
+		}
 		Connection con = this.dbCon.getConnection();
 		String queryString = "SELECT * From fn_ViewGameLists(?)";
 		PreparedStatement stmt;
@@ -100,7 +90,10 @@ public class ListServices {
 		}
 	}
 	public boolean createList(String listName) {
-		if(listName.contentEquals("")) return false;
+		if(listName.contentEquals("")) {
+			System.out.println("List Name cannot be empty");
+			return false;
+		}
 		Connection con = dbCon.getConnection();
 		CallableStatement cs;
 		try {
@@ -109,6 +102,15 @@ public class ListServices {
 			cs.setString(2, listName);
 			cs.setString(3, this.user);
 			cs.execute();
+			int result = cs.getInt(1);
+			if(result == 1) { //both of these cases shouldn't be reached but just in case
+				System.out.println("User must be logged in to create a list");
+				return false;
+			}
+			else if(result == 2) {
+				System.out.println("Listname cannot be null");
+				return false;
+			}
 			cs = con.prepareCall("{? = call fn_GetListID(?)}");
 			cs.registerOutParameter(1, Types.INTEGER);
 			cs.setString(2, listName);
@@ -124,8 +126,16 @@ public class ListServices {
 		return false;
 	}
 	public boolean addGameToList(String listName, String gameName, Map<String, Integer> gameMap) {
-		int listId = ListIdMap.get(listName);
-		int gameId = gameMap.get(gameName);
+		Integer listId = ListIdMap.get(listName);
+		if(listId == null) {
+			System.out.println("List Name entered incorrectly or not in game list");
+			return false;
+		}
+		Integer gameId = gameMap.get(gameName);
+		if(gameId == null) {
+			System.out.println("Game Name entered incorrectly or not in game list");
+			return false;
+		}
 		Connection con = dbCon.getConnection();
 		CallableStatement cs;
 		try {
@@ -157,9 +167,81 @@ public class ListServices {
 		}
 		return false;
 	}
+	public boolean initGameList(String listName, String gameName, Map<String, Integer> gameMap) {
+		if(listName.contentEquals("")) {
+			System.out.println("List Name cannot be empty");
+			return false;
+		}
+		Integer gameId = gameMap.get(gameName);
+		if(gameId == null) {
+			System.out.println("Game Name entered incorrectly or not in game list");
+			return false;
+		}
+		Connection con = dbCon.getConnection();
+		CallableStatement cs;
+		try {
+			cs = con.prepareCall("{? = call CreateList(?,?)}");
+			cs.registerOutParameter(1, Types.INTEGER);
+			cs.setString(2, listName);
+			cs.setString(3, this.user);
+			cs.execute();
+			cs = con.prepareCall("{? = call fn_GetListID(?)}");
+			cs.registerOutParameter(1, Types.INTEGER);
+			cs.setString(2, listName);
+			cs.execute();
+			ListIdMap.put(listName, cs.getInt(1));
+			System.out.println("List added sucessfully!");
+			System.out.println();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+		Integer listId = ListIdMap.get(listName);
+		if(listId == null) {
+			System.out.println("List Name entered incorrectly or not in game list");
+			return false;
+		}
+		try {
+			cs = con.prepareCall("{? = call AddGameToList(?,?)}");
+			cs.registerOutParameter(1, Types.INTEGER);
+			cs.setInt(2, listId);
+			cs.setInt(3, gameId);
+//			cs.setString(4, this.user);
+			cs.execute();
+			int value = cs.getInt(1);
+			if(value == 1) {
+				System.out.println("The listname given wasn't valid");
+				return false;
+			}
+			else if(value == 2) {
+				System.out.println("The game given must be in the games list");
+				return false;
+			}
+			else if(value == 3) {
+				System.out.println("Cannot add to other people's lists");
+				return false;
+			}
+			System.out.println("Game added sucessfully!");
+			System.out.println();
+			return true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+	}
 	public boolean removeGameFromList(String listName, String gameName, Map<String,Integer> gameMap) {
-		int listId = ListIdMap.get(listName);
-		int gameId = gameMap.get(gameName);
+		Integer listId = ListIdMap.get(listName);
+		Integer gameId = gameMap.get(gameName);
+		if(listId == null) {
+			System.out.println("List Name entered incorrectly or not in game list");
+			return false;
+		}
+		if(gameId == null) {
+			System.out.println("Game Name entered incorrectly or not in game list");
+			return false;
+		}
 		Connection con = dbCon.getConnection();
 		CallableStatement cs;
 		try {
@@ -184,7 +266,11 @@ public class ListServices {
 		return false;
 	}
 	public boolean deleteList(String listName) {
-		int listId = ListIdMap.get(listName);
+		Integer listId = ListIdMap.get(listName);
+		if(listId == null) {
+			System.out.println("List Name entered incorrectly or not in game list");
+			return false;
+		}
 		Connection con = dbCon.getConnection();
 		CallableStatement cs;
 		try {
@@ -239,7 +325,11 @@ public class ListServices {
 	}
 	
 	public void viewConsoleList(String listName) {
-		int listId = ListIdMap.get(listName);
+		Integer listId = ListIdMap.get(listName);
+		if(listId == null) {
+			System.out.println("List Name entered incorrectly or not in console lists");
+			return;
+		}
 		Connection con = this.dbCon.getConnection();
 		String queryString = "SELECT * From fn_ViewConsoleLists(?)";
 		PreparedStatement stmt;
@@ -259,9 +349,17 @@ public class ListServices {
 	}
 	
 	public boolean addConsoleToList(String listName, String consoleName, Map<String, Integer> consoleMap) {
-		int listId = ListIdMap.get(listName);
-		System.out.println(consoleMap.toString());
-		int consoleId = consoleMap.get(consoleName);
+		Integer listId = ListIdMap.get(listName);
+		Integer consoleId = consoleMap.get(consoleName);
+		if(listId == null) {
+			System.out.println("List Name entered incorrectly or not in game list");
+			return false;
+		}
+		if(consoleId == null) {
+			System.out.println("Console Name entered incorrectly or not in game list");
+			return false;
+		}
+	
 		Connection con = dbCon.getConnection();
 		CallableStatement cs;
 		try {
@@ -295,8 +393,16 @@ public class ListServices {
 	}
 	
 	public boolean removeConsoleFromList(String listName, String consoleName, Map<String,Integer> consoleMap) {
-		int listId = ListIdMap.get(listName);
-		int consoleId = consoleMap.get(consoleName);
+		Integer listId = ListIdMap.get(listName);
+		Integer consoleId = consoleMap.get(consoleName);
+		if(listId == null) {
+			System.out.println("List Name entered incorrectly or not in game list");
+			return false;
+		}
+		if(consoleId == null) {
+			System.out.println("Console Name entered incorrectly or not in game list");
+			return false;
+		}
 		Connection con = dbCon.getConnection();
 		CallableStatement cs;
 		try {
@@ -321,4 +427,64 @@ public class ListServices {
 		return false;
 	}
 	
+	public boolean consoleListInit(String listName, String consoleName, Map<String,Integer> consoleMap) {
+		Integer listId = ListIdMap.get(listName);
+		Integer consoleId = consoleMap.get(consoleName);
+		if(listId == null) {
+			System.out.println("List Name entered incorrectly or not in game list");
+			return false;
+		}
+		if(consoleId == null) {
+			System.out.println("Console Name entered incorrectly or not in game list");
+			return false;
+		}
+		Connection con = dbCon.getConnection();
+		CallableStatement cs;
+		try {
+			cs = con.prepareCall("{? = call CreateList(?,?)}");
+			cs.registerOutParameter(1, Types.INTEGER);
+			cs.setString(2, listName);
+			cs.setString(3, this.user);
+			cs.execute();
+			cs = con.prepareCall("{? = call fn_GetListID(?)}");
+			cs.registerOutParameter(1, Types.INTEGER);
+			cs.setString(2, listName);
+			cs.execute();
+			ListIdMap.put(listName, cs.getInt(1));
+			System.out.println("List added sucessfully!");
+			System.out.println();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+		try {
+			cs = con.prepareCall("{? = call AddConsoleToList(?,?)}"); //
+			cs.registerOutParameter(1, Types.INTEGER);
+			cs.setInt(2, consoleId);
+			cs.setInt(3, listId);
+//			cs.setString(4, this.user);
+			cs.execute();
+			int value = cs.getInt(1);
+			if(value == 1) {
+				System.out.println("The listname given wasn't valid");
+				return false;
+			}
+			else if(value == 2) {
+				System.out.println("The console given must be in the consoles list");
+				return false;
+			}
+			else if(value == 3) {
+				System.out.println("Cannot add to other people's lists");
+				return false;
+			}
+			System.out.println("Console added sucessfully!");
+			System.out.println();
+			return true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
 }

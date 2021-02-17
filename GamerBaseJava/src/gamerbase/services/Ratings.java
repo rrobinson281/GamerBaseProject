@@ -20,7 +20,6 @@ public class Ratings {
 		this.dbService = dbService;
 		this.GameIdMap = new HashMap<>();
 		String queryString = "SELECT Name From Game";
-		String queryString2 = "select Name from Publisher";
 		PreparedStatement stmt;
 		try {
 			stmt = this.dbService.getConnection().prepareStatement(queryString);
@@ -38,7 +37,11 @@ public class Ratings {
 	
 	public void createRating(String gameName, String review, float rating) {
 		review = review.equals("") ? null : review;
-		int gameID = GameIdMap.get(gameName);
+		Integer gameID = GameIdMap.get(gameName);
+		if(gameID == null) {
+			System.out.println("Game Name entered incorrectly or not in game list");
+			return;
+		}
 		CallableStatement newRating = null;
 		try {
 			newRating = dbService.getConnection().prepareCall("{call CreateRating(?, ?, ?, ?)}");
@@ -55,7 +58,11 @@ public class Ratings {
 	}
 	
 	public void deleteRating(String gameName) {
-		int gameID = GameIdMap.get(gameName);
+		Integer gameID = GameIdMap.get(gameName);
+		if(gameID == null) {
+			System.out.println("Game Name entered incorrectly or not in game list");
+			return;
+		}
 		CallableStatement deleteRating = null;
 		try {
 			deleteRating = dbService.getConnection().prepareCall("{call DeleteRating(?, ?)}");
@@ -71,15 +78,19 @@ public class Ratings {
 	
 	public ArrayList<String> updateRating(String gameName, String review, float rating) {
 		ArrayList<String> friends = new ArrayList<String>();
-		int gameID = GameIdMap.get(gameName);
-		CallableStatement updateRating = null;
+		Integer gameID = GameIdMap.get(gameName);
+		if(gameID == null) {
+			System.out.println("Game Name entered incorrectly or not in game list");
+			return null;
+		}
+		CallableStatement stmt;
 		try {
-			updateRating = dbService.getConnection().prepareCall("{call UpdateRating(?, ?, ?, ?)}");
-			updateRating.setInt(1, gameID);
-			updateRating.setString(2, this.username);
-			updateRating.setString(3, review);
-			updateRating.setFloat(4, rating);
-			updateRating.executeUpdate();
+			stmt = dbService.getConnection().prepareCall("{call UpdateRating(?, ?, ?, ?)}");
+			stmt.setInt(1, gameID);
+			stmt.setString(2, this.username);
+			stmt.setString(3, review);
+			stmt.setFloat(4, rating);
+			stmt.executeUpdate();
 		}catch (SQLException e) {
 			e.printStackTrace();
 		}

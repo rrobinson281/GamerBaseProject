@@ -67,10 +67,6 @@ public class ConsoleServices {
 				System.out.println("GameName cannot be null or empty.");
 				return false;
 			}
-			else if(value == 2) {
-				System.out.println("Publisher has to be an existing publisher or null.");
-				return false;
-			}
 			cs = con.prepareCall("{? = call fn_GetConsoleID(?)}");
 			cs.registerOutParameter(1, Types.INTEGER);
 			cs.setString(2, consoleName);

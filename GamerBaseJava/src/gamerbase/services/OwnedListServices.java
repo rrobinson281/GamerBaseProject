@@ -36,7 +36,11 @@ public class OwnedListServices {
 	}
 	
 	public boolean AddOwnedGame(String gameName) {
-		int gameID = GameIdMap.get(gameName);
+		Integer gameID = GameIdMap.get(gameName);
+		if(gameID == null) {
+			System.out.println("Game Name entered incorrectly or not in game list");
+			return false;
+		}
 		Connection con = dbService.getConnection();
 		CallableStatement cs;
 		try {
@@ -64,7 +68,11 @@ public class OwnedListServices {
 		return false;
 	}
 	public boolean RemoveOwnedGame(String gameName) {
-		int gameID = GameIdMap.get(gameName);
+		Integer gameID = GameIdMap.get(gameName);
+		if(gameID == null) {
+			System.out.println("Game Name entered incorrectly or not in game list");
+			return false;
+		}
 		Connection con = dbService.getConnection();
 		CallableStatement cs;
 		try {
