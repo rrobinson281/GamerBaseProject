@@ -19,16 +19,15 @@ public class Ratings {
 		this.username = name;
 		this.dbService = dbService;
 		this.GameIdMap = new HashMap<>();
-		String queryString = "SELECT Name From Game";
+		String queryString = "SELECT Name, ID From Game";
 		PreparedStatement stmt;
 		try {
 			stmt = this.dbService.getConnection().prepareStatement(queryString);
 			ResultSet rs = stmt.executeQuery();
-			int index = 0;
 			while(rs.next()) {
 				String gameName = rs.getString(rs.findColumn("name"));
-				GameIdMap.put(gameName, index);
-				index++;
+				int id = rs.getInt("ID");
+				GameIdMap.put(gameName, id);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
