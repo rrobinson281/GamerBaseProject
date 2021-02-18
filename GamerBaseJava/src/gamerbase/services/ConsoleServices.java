@@ -81,7 +81,62 @@ public class ConsoleServices {
 		}
 		return false;
 	}
-	public Map<String, Integer> getGameMap(){
+	public Map<String, Integer> getConsoleMap(){
 		return ConsoleIdMap;
+	}
+	public boolean UpdateConsole(String consoleName, String newName) {
+		Integer consoleID = ConsoleIdMap.get(consoleName);
+		newName = newName.equals("")?null:newName;
+		if(consoleID == null) {
+			System.out.println("Console Name entered incorrectly or not in console list");
+			return false;
+		}
+		CallableStatement stmt;
+		try {
+			stmt = dbService.getConnection().prepareCall("{? = call UpdateConsole(?, ?)}");
+			stmt.registerOutParameter(1, Types.INTEGER);
+			stmt.setInt(2, consoleID);
+			stmt.setString(3, newName);
+			stmt.executeUpdate();
+			int value = stmt.getInt(1);
+			if(value == 1) {
+				System.out.println("Console Name cannot be empty.");
+				return false;
+			}
+			if(newName != null) {
+				ConsoleIdMap.remove(consoleName);
+				ConsoleIdMap.put(newName, consoleID);
+			}
+			System.out.println("Updated console!");
+			return true;
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public boolean RemoveConsole(String consoleName) {
+		Integer consoleID = ConsoleIdMap.get(consoleName);
+		if(consoleID == null) {
+			System.out.println("Console Name entered incorrectly or not in console list");
+			return false;
+		}
+		CallableStatement stmt;
+		try {
+			stmt = dbService.getConnection().prepareCall("{? = call UpdateConsole(?)}");
+			stmt.registerOutParameter(1, Types.INTEGER);
+			stmt.setInt(2, consoleID);
+			stmt.executeUpdate();
+			int value = stmt.getInt(1);
+			if(value == 1) {
+				System.out.println("Console Name cannot be empty.");
+				return false;
+			}
+			System.out.println("Updated console!");
+			return true;
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 }

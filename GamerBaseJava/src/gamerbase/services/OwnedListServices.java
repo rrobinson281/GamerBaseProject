@@ -112,4 +112,21 @@ public class OwnedListServices {
 			e.printStackTrace();
 		}
 	}
+	public void ViewOwnedGames(String username) {
+		Connection con = dbService.getConnection();
+		String queryString = "SELECT * From fn_viewOwnedGames(?)";
+		PreparedStatement stmt;
+		try {
+			stmt = con.prepareStatement(queryString);
+			stmt.setString(1, username);
+			ResultSet rs = stmt.executeQuery();
+			while(rs.next()) {
+				String gameName = rs.getString(rs.findColumn("name"));
+				System.out.println(gameName);
+			}
+			System.out.println();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }

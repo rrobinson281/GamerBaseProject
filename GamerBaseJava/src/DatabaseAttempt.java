@@ -47,6 +47,7 @@ public class DatabaseAttempt {
 				String gamePub="";
 				System.out.println();
 				System.out.println("Enter command g for Game Commands");
+				System.out.println("Enter command c for Console Commands");
 				System.out.println("Enter command r for Rating Commands");
 				System.out.println("Enter command u for User Commands");
 				System.out.println("Enter command f for Friend Commands");
@@ -65,6 +66,7 @@ public class DatabaseAttempt {
 				    System.out.println("  RemoveGameFromOwnList -Remove a game from your owned list");
 				    System.out.println("  UpdateGame -Update a game");
 				    System.out.println("  AddConsolePlayedOn - Add a console that the game can be played on");
+				    System.out.println("  RemoveConsolePlayedOn - Remove a console that the game can be played on");
 				    System.out.println("  ViewPlayableOn - View the consoles you can play a game on");
 				    System.out.println("  SortGames -Sort through games in the system");
 				    System.out.print("Enter command or press x to exit: ");
@@ -99,13 +101,40 @@ public class DatabaseAttempt {
 							ownedListHandler.RemoveOwnedGame(gameName);
 							break;
 						case "updategame":
-							System.out.println("not yet implemented");
+							System.out.print("Enter the name of the game: ");
+							gameName = this.reader.readLine();
+							System.out.print("Enter the new name of the game(leave empty for no change): ");
+							String newName = this.reader.readLine();
+							System.out.print("Enter a description of the game(leave empty for no change): ");
+							String newDesc = this.reader.readLine();
+							System.out.print("Enter the genre of the game(leave empty for no change): ");
+							String newGenre = this.reader.readLine();
+							System.out.print("Enter the release date of the game(leave empty for no change): ");
+							String newRelease = this.reader.readLine();
+							System.out.print("Enter the publisher of the game(leave empty for no change): ");
+							String newPub = this.reader.readLine();
+							gameHandler.EditGame(gameName, newName, newDesc, newGenre, newRelease, newPub);
 							break;
 						case "addconsoleplayedon":
-							System.out.println("not yet implemented");
+							System.out.print("Enter the name of the game: ");
+							gameName = this.reader.readLine();
+							consoleHandler.ReadAllConsoles();
+							System.out.print("Enter the name of the console this game can be played on: ");
+							consoleName = this.reader.readLine();
+							gameHandler.createPlayedOn(gameName, consoleName, consoleHandler.getConsoleMap());
+							break;
+						case "removeconsoleplayedon":
+							System.out.print("Enter the name of the game: ");
+							gameName = this.reader.readLine();
+							consoleHandler.ReadAllConsoles();
+							System.out.print("Enter the name of the console this game can no longer be played on: ");
+							consoleName = this.reader.readLine();
+							gameHandler.removeGamePlayedOn(gameName, consoleName, consoleHandler.getConsoleMap());
 							break;
 						case "viewplayableon":
-							System.out.println("not yet implemented");
+							System.out.print("Enter the name of the game: ");
+							gameName = this.reader.readLine();
+							gameHandler.gamePlayedOn(gameName);
 							break;
 						case "sortgames":
 							System.out.print("Enter the name of the game(this can be left empty): ");
@@ -126,29 +155,37 @@ public class DatabaseAttempt {
 					    System.out.println("Console Commands:");
 					    System.out.println("  CreateConseole -Add a console to the system");
 					    System.out.println("  UpdateConsole -Update a console's information");
-					    System.out.println("  DeleteConsole -Remove a console from the system");
+//					    System.out.println("  DeleteConsole -Remove a console from the system");
 					    System.out.print("Enter command or press x to exit: ");
 						command = this.reader.readLine();
 						if(inputReaderIsX(command)) {break;}
 						switch(command.toLowerCase()){
 							case "createconseole":
-							
+								System.out.print("Enter the name of the console you want to create: ");
+								consoleName = this.reader.readLine();
+								consoleHandler.CreateConsole(consoleName);
 								break;
 							case "updateconsole":
-								
+								System.out.print("Enter the name of the console you want to update: ");
+								consoleName = this.reader.readLine();
+								System.out.print("Enter the new name for the console(leave empty for no change): ");
+								String newName = this.reader.readLine();
+								consoleHandler.UpdateConsole(consoleName, newName);
 								break;
 							case "deleteconsole":
 								
 								break;
 						}
+						break;
 				  case "r":
 					  System.out.println("Ratings Commands: ");
-					  System.out.println("   (C) Create Rating");
-					  System.out.println("   (R) Remove Rating");
-					  System.out.println("   (U) Update Rating");
-					  System.out.println("   (V) View Ratings");
+					  System.out.println("   CreateRating -Create a rating for a game");
+					  System.out.println("   RemoveRating -Remove a rating you've made");
+					  System.out.println("   UpdateRating -Update a rating you've made");
+					  System.out.println("   ViewRatings -View all user ratings");
+					  System.out.println("   ViewUserRatings -View a specific user's ratings");
 					  String r = this.reader.readLine().toLowerCase();
-					  if(r.equals("c")){
+					  if(r.equals("createrating")){
 						  System.out.print("Please Enter Game Name: ");
 						  gameName = this.reader.readLine();
 						  System.out.println("Please Enter Review: ");
@@ -157,13 +194,13 @@ public class DatabaseAttempt {
 						  String rating = this.reader.readLine();
 						  float rate = Float.parseFloat(rating);
 						  ratingHandler.createRating(gameName, review, rate);
-					  }else if(r.equals("r")) {
+					  }else if(r.equals("removerating")) {
 						  System.out.println("Your Reviews: ");
 						  ratingHandler.readUserRatings(user);
 						  System.out.print("Please Enter Game Name: ");
 						  gameName = this.reader.readLine();
 						  ratingHandler.deleteRating(gameName);
-					  }else if(r.equals("u")) {
+					  }else if(r.equals("updaterating")) {
 						  System.out.println("Your Reviews");
 						  ratingHandler.readUserRatings(user);
 						  System.out.print("Please Enter Game Name: ");
@@ -176,9 +213,16 @@ public class DatabaseAttempt {
 						  ratingHandler.updateRating(gameName, review, rate);
 						  break;
 					  }
-					  else if(r.equals("v")){
+					  else if(r.equals("viewratings")){
 						  ratingHandler.readRatings();
-					  }else {
+					  }
+					  else if(r.equals("viewuserratings")) {
+						  p.viewUsers();
+						  System.out.print("Enter the name of the user you want to view the ratings of: ");
+						  String username = this.reader.readLine();
+						  ratingHandler.readUserRatings(username);
+					  }
+					  else {
 						  System.out.println("Invalid");
 					  }
 					  break;
@@ -186,20 +230,28 @@ public class DatabaseAttempt {
 				  case "f":		  
 					  
 					  System.out.println("Friends List Commands: ");
-					  System.out.println("  (V) View Friends");
-					  System.out.println("  (A) Add Friend");
-					  System.out.println("  (R) Remove Friend");
+					  System.out.println("  ViewFriends -View your friend list");
+					  System.out.println("  ViewFriendOwnedList -View a friends list of owned games");
+					  System.out.println("  AddFriend -Add a friend");
+					  System.out.println("  RemoveFriend -Remove a friend");
 					  System.out.print("  (B) Back \n Command: ");
 					  command = this.reader.readLine().toLowerCase();
-					  if(command.equals("v")) {
+					  if(command.equals("viewfriends")) {
 						  ArrayList<String> friends = fl.readFriendsList();
 						  System.out.println("Friends: ");
 						  for(int i = 0; i < friends.size(); i++) System.out.println(friends.get(i));
-					  }else if(command.equals("a")){
+					  }else if(command.equals("viewfriendownedlist")){
+						  ArrayList<String> friends = fl.readFriendsList();
+						  for(int i = 0; i < friends.size(); i++) System.out.println(friends.get(i));
+						  System.out.print("Please Enter Friend Name: ");
+						  String name = this.reader.readLine();
+						  ownedListHandler.ViewOwnedGames(name);
+					  }
+					  else if(command.equals("addfriend")){
 						  System.out.print("Please Enter Friend Name: ");
 						  String friendName = this.reader.readLine();
 						  fl.addFriend(friendName);
-					  }else if(command.equals("r")) {
+					  }else if(command.equals("removefriend")) {
 						  System.out.println("Current friends: ");
 						  ArrayList<String> friends = fl.readFriendsList();
 						  for(int i = 0; i < friends.size(); i++) System.out.println(friends.get(i));
@@ -223,13 +275,13 @@ public class DatabaseAttempt {
 					  		  System.out.println("These are the Current Game lists: ");
 					  		  listHandler.readAllGameLists();
 					  		  System.out.println("Game List Commands");
-							  System.out.println("  (ViewSpecificList) View A specific Game");
-							  System.out.println("  (ViewMyGameLists) View Your Game Lists");
-							  System.out.println("  (CreateGameList) Create a Game List");
-							  System.out.println("  (AddGameToList) Add a Game to a List");
-//							  System.out.println("  (EditGameList) Edit a Game on a List");
-							  System.out.println("  (RemoveGameList) Remove a Game from a List");
-							  System.out.println("  (DeleteGameList) Delete a Game List");
+							  System.out.println("  ViewSpecificList -View A specific Game");
+							  System.out.println("  ViewMyGameLists -View Your Game Lists");
+							  System.out.println("  CreateGameList -Create a Game List");
+							  System.out.println("  AddGameToList -Add a Game to a List");
+//							  System.out.println("  EditGameList) Edit a Game on a List");
+							  System.out.println("  RemoveGameList -Remove a Game from a List");
+							  System.out.println("  DeleteGameList -Delete a Game List");
 							  command = this.reader.readLine();
 							  String listName = "";
 							  if(inputReaderIsX(command)) {break;}
@@ -289,13 +341,13 @@ public class DatabaseAttempt {
 					  		System.out.println("These are the Current Console lists: ");
 					  		  listHandler.readAllConsoleLists();
 					  		  System.out.println("Console List Commands");
-							  System.out.println("  (ViewSpecificList) View A specific Console");
-							  System.out.println("  (ViewMyConsoleLists) View Your Console Lists");
-							  System.out.println("  (CreateConsoleList) Create a Console List");
-							  System.out.println("  (AddConsoleToList) Add a Console to a List");
-//							  System.out.println("  (EditConsoleList) Edit a Console on a List");
-							  System.out.println("  (RemoveConsoleList) Remove a Console from a List");
-							  System.out.println("  (DeleteConsoleList) Delete a Console List");
+							  System.out.println("  ViewSpecificList -View A specific Console");
+							  System.out.println("  ViewMyConsoleLists -View Your Console Lists");
+							  System.out.println("  CreateConsoleList -Create a Console List");
+							  System.out.println("  AddConsoleToList -Add a Console to a List");
+//							  System.out.println("  EditConsoleList) Edit a Console on a List");
+							  System.out.println("  RemoveConsoleList -Remove a Console from a List");
+							  System.out.println("  DeleteConsoleList -Delete a Console List");
 							  command = this.reader.readLine();
 							  listName = "";
 							  if(inputReaderIsX(command)) {break;}
@@ -317,7 +369,7 @@ public class DatabaseAttempt {
 							  		consoleHandler.ReadAllConsoles();
 							  		System.out.println("Add your first console!: ");
 							  		consoleName = this.reader.readLine();
-							  		listHandler.consoleListInit(listName, consoleName, consoleHandler.getGameMap());
+							  		listHandler.consoleListInit(listName, consoleName, consoleHandler.getConsoleMap());
 							  		break;
 							  	case "addconsoletolist":
 							  		System.out.println("Your Lists: ");
@@ -327,7 +379,7 @@ public class DatabaseAttempt {
 							  		consoleHandler.ReadAllConsoles();
 							  		System.out.println("Enter the name of the Console you want to add");
 							  		consoleName = this.reader.readLine();
-							  		listHandler.addConsoleToList(listName, consoleName, consoleHandler.getGameMap());
+							  		listHandler.addConsoleToList(listName, consoleName, consoleHandler.getConsoleMap());
 							  		break;
 							  	case "editconsolelist":
 							  		break;
@@ -340,7 +392,7 @@ public class DatabaseAttempt {
 //							  		consoleHandler.ReadAllConsoles();
 							  		System.out.println("Enter the name of the Console you want to remove");
 							  		consoleName = this.reader.readLine();
-							  		listHandler.removeConsoleFromList(listName, consoleName, consoleHandler.getGameMap());
+							  		listHandler.removeConsoleFromList(listName, consoleName, consoleHandler.getConsoleMap());
 							  		break;
 							  	case "deleteconsolelist":
 							  		System.out.println("Your Lists: ");
