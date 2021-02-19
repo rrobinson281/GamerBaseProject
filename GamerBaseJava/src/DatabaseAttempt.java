@@ -31,6 +31,7 @@ public class DatabaseAttempt {
     	
 		System.out.print("Use X or space to exit commands. Press Y to continue: ");
 		if(this.reader.readLine().equals("Y")) {
+			
 			ListServices listHandler = new ListServices(connection, user);
 			GameServices gameHandler = new GameServices(connection);
 			ConsoleServices consoleHandler = new ConsoleServices(connection);
@@ -45,6 +46,15 @@ public class DatabaseAttempt {
 				String gameGenre="";
 				String gameRelease="";
 				String gamePub="";
+//				while(true) {
+//				System.out.println("username: ");
+//				String U = this.reader.readLine();
+//				System.out.println("password: ");
+//				String P = this.reader.readLine();
+//				if(P.equals("!")) break;
+//				userHandler.register(U, P);
+//				
+//				}
 				System.out.println();
 				System.out.println("Enter command g for Game Commands");
 				System.out.println("Enter command c for Console Commands");
@@ -153,14 +163,14 @@ public class DatabaseAttempt {
 						System.out.println("This the the current list of Consoles");
 						consoleHandler.ReadAllConsoles();
 					    System.out.println("Console Commands:");
-					    System.out.println("  CreateConseole -Add a console to the system");
+					    System.out.println("  CreateConsole -Add a console to the system");
 					    System.out.println("  UpdateConsole -Update a console's information");
 //					    System.out.println("  DeleteConsole -Remove a console from the system");
 					    System.out.print("Enter command or press x to exit: ");
 						command = this.reader.readLine();
 						if(inputReaderIsX(command)) {break;}
 						switch(command.toLowerCase()){
-							case "createconseole":
+							case "createconsole":
 								System.out.print("Enter the name of the console you want to create: ");
 								consoleName = this.reader.readLine();
 								consoleHandler.CreateConsole(consoleName);
@@ -231,7 +241,7 @@ public class DatabaseAttempt {
 					  
 					  System.out.println("Friends List Commands: ");
 					  System.out.println("  ViewFriends -View your friend list");
-					  System.out.println("  ViewFriendOwnedList -View a friends list of owned games");
+					  System.out.println("  ViewFriendOwnedList -View a friend's list of owned games");
 					  System.out.println("  AddFriend -Add a friend");
 					  System.out.println("  RemoveFriend -Remove a friend");
 					  System.out.print("  (B) Back \n Command: ");
@@ -546,48 +556,51 @@ public class DatabaseAttempt {
     }
 	
     public static boolean login(String username, String password, DatabaseConnectionService dbCon) {
-        String queryString = "SELECT password From [User] where Username = ?";
-        try {
-            PreparedStatement stmt =  dbCon.getConnection().prepareStatement(queryString);
-            stmt.setString(1, username);
-            ResultSet rs = stmt.executeQuery();
-            while(rs.next()) {
-                String stored = rs.getString(rs.findColumn("Password"));
-                //System.out.println("Given Password: " + password + " Stored Password: " + stored);
-                if(password.equals(stored)) {
-                    System.out.println("User " + username + " logged in sucessfully");
-                    //user = username;
-                    return true;
-                }
-                else {
-                    System.out.println("Couldn't log in");
-                    return false;
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        
-        return false;
+    	UserService userHandler = new UserService(dbCon);
+    	
+//        String queryString = "SELECT password From [User] where Username = ?";
+//        try {
+//            PreparedStatement stmt =  dbCon.getConnection().prepareStatement(queryString);
+//            stmt.setString(1, username);
+//            ResultSet rs = stmt.executeQuery();
+//            while(rs.next()) {
+//                String stored = rs.getString(rs.findColumn("Password"));
+//                //System.out.println("Given Password: " + password + " Stored Password: " + stored);
+//                if(password.equals(stored)) {
+//                    System.out.println("User " + username + " logged in sucessfully");
+//                    //user = username;
+//                    return true;
+//                }
+//                else {
+//                    System.out.println("Couldn't log in");
+//                    return false;
+//                }
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//        
+        return userHandler.login(username, password);
     }
     public static boolean register(String username, String password, DatabaseConnectionService dbCon) {
-    	Connection con = dbCon.getConnection();
-		CallableStatement cs;
-		try {
-			cs = con.prepareCall("{? = call RegisterUser(?,?)}");
-			cs.registerOutParameter(1, Types.INTEGER);
-			cs.setString(2, username);
-			cs.setString(3, password);
-			cs.execute();
-			int value = cs.getInt(1);
-			if(value == 1) {
-				System.out.println("Null values are not allowed in the Login Table.");
-				return false;
-			}
-			return true;
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-    	return false;
+    	UserService userHandler = new UserService(dbCon);
+//    	Connection con = dbCon.getConnection();
+//		CallableStatement cs;
+//		try {
+//			cs = con.prepareCall("{? = call RegisterUser(?,?)}");
+//			cs.registerOutParameter(1, Types.INTEGER);
+//			cs.setString(2, username);
+//			cs.setString(3, password);
+//			cs.execute();
+//			int value = cs.getInt(1);
+//			if(value == 1) {
+//				System.out.println("Null values are not allowed in the Login Table.");
+//				return false;
+//			}
+//			return true;
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		}
+    	return userHandler.register(username, password);
     }
 }
