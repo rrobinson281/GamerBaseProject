@@ -18,17 +18,15 @@ public class OwnedListServices {
 		this.GameIdMap = new HashMap<>();
 		this.user = user;
 		Connection con = dbService.getConnection();
-		String queryString = "SELECT Name From Game";
-		String queryString2 = "select Name from Publisher";
+		String queryString = "SELECT Name, ID From Game";
 		PreparedStatement stmt;
 		try {
 			stmt = con.prepareStatement(queryString);
 			ResultSet rs = stmt.executeQuery();
-			int index = 0;
 			while(rs.next()) {
 				String gameName = rs.getString(rs.findColumn("name"));
-				GameIdMap.put(gameName, index);
-				index++;
+				int id = rs.getInt("ID");
+				GameIdMap.put(gameName, id);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
