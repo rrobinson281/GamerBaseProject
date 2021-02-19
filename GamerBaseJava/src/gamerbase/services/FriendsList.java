@@ -22,12 +22,12 @@ public class FriendsList{
 		ArrayList<String> friends = new ArrayList<String>();
 //		String query = "SELECT * FROM fn_ViewFriendsList('"+this.username+"')";
 		Connection con = dbService.getConnection();
-		String query = "SELECT * fn_ViewFriendsList(?)";
+		String query = "SELECT * from fn_ViewFriendsList(?)";
 		PreparedStatement stmt;
 		try{
 			stmt = con.prepareStatement(query);
 			stmt.setString(1, this.username);
-			ResultSet rs = stmt.executeQuery(query);
+			ResultSet rs = stmt.executeQuery();
 			while(rs.next()) {
 				friends.add(rs.getString("Friendee"));
 			}
@@ -54,6 +54,11 @@ public class FriendsList{
 				System.out.println("The Person you are trying to friend isn't in the database");
 				return;
 			}
+			else if(result ==3) {
+				System.out.println("You two are already friends!");
+				return;
+			}
+			
 			System.out.println("Friend added");
 		} catch (SQLException e) {
 			System.out.println("Friend failed to add");
@@ -64,7 +69,7 @@ public class FriendsList{
 	public void removeFriend(String friendName) {
 		CallableStatement remove = null;
 		try {
-			remove = dbService.getConnection().prepareCall("{call RemoveFriend(?, ?)}");
+			remove = dbService.getConnection().prepareCall("{? = call RemoveFriend(?, ?)}");
 			remove.registerOutParameter(1, Types.INTEGER);
 			remove.setString(3, this.username);
 			remove.setString(2, friendName);

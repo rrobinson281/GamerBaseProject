@@ -111,6 +111,10 @@ public class ListServices {
 				System.out.println("Listname cannot be null");
 				return false;
 			}
+			else if(result == 3) {
+				System.out.println("Listname is already in use");
+				return false;
+			}
 			cs = con.prepareCall("{? = call fn_GetListID(?)}");
 			cs.registerOutParameter(1, Types.INTEGER);
 			cs.setString(2, listName);
@@ -155,7 +159,7 @@ public class ListServices {
 				return false;
 			}
 			else if(value == 3) {
-				System.out.println("Cannot add to other people's lists");
+				System.out.println("That game is already on the list");
 				return false;
 			}
 			System.out.println("Game added sucessfully!");
@@ -185,6 +189,19 @@ public class ListServices {
 			cs.setString(2, listName);
 			cs.setString(3, this.user);
 			cs.execute();
+			int value = cs.getInt(1);
+			if(value == 1) {
+				System.out.println("The listname given wasn't valid");
+				return false;
+			}
+			else if(value == 2) {
+				System.out.println("The game given must be in the games list");
+				return false;
+			}
+			else if(value == 3) {
+				System.out.println("That game is already on the list");
+				return false;
+			}
 			cs = con.prepareCall("{? = call fn_GetListID(?)}");
 			cs.registerOutParameter(1, Types.INTEGER);
 			cs.setString(2, listName);
@@ -219,7 +236,7 @@ public class ListServices {
 				return false;
 			}
 			else if(value == 3) {
-				System.out.println("Cannot add to other people's lists");
+				System.out.println("That game is already on the list");
 				return false;
 			}
 			System.out.println("Game added sucessfully!");
@@ -379,7 +396,7 @@ public class ListServices {
 				return false;
 			}
 			else if(value == 3) {
-				System.out.println("Cannot add to other people's lists");
+				System.out.println("That console is already on the list");
 				return false;
 			}
 			System.out.println("Console added sucessfully!");
@@ -428,12 +445,9 @@ public class ListServices {
 	}
 	
 	public boolean consoleListInit(String listName, String consoleName, Map<String,Integer> consoleMap) {
-		Integer listId = ListIdMap.get(listName);
+		
 		Integer consoleId = consoleMap.get(consoleName);
-		if(listId == null) {
-			System.out.println("List Name entered incorrectly or not in game list");
-			return false;
-		}
+		
 		if(consoleId == null) {
 			System.out.println("Console Name entered incorrectly or not in game list");
 			return false;
@@ -446,6 +460,19 @@ public class ListServices {
 			cs.setString(2, listName);
 			cs.setString(3, this.user);
 			cs.execute();
+			int value = cs.getInt(1);
+			if(value == 1) {
+				System.out.println("The listname given wasn't valid");
+				return false;
+			}
+			else if(value == 2) {
+				System.out.println("The game given must be in the games list");
+				return false;
+			}
+			else if(value == 3) {
+				System.out.println("That game is already on the list");
+				return false;
+			}
 			cs = con.prepareCall("{? = call fn_GetListID(?)}");
 			cs.registerOutParameter(1, Types.INTEGER);
 			cs.setString(2, listName);
@@ -456,6 +483,11 @@ public class ListServices {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return false;
+		}
+		Integer listId = ListIdMap.get(listName);
+		if(listId == null) {
+			System.out.println("List Name entered incorrectly or not in game list");
 			return false;
 		}
 		try {
@@ -475,7 +507,7 @@ public class ListServices {
 				return false;
 			}
 			else if(value == 3) {
-				System.out.println("Cannot add to other people's lists");
+				System.out.println("That console is already on the list");
 				return false;
 			}
 			System.out.println("Console added sucessfully!");

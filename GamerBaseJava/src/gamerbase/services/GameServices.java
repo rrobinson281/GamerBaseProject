@@ -104,6 +104,7 @@ public class GameServices {
 		Integer pubID = Publisher.equals("") ? null :PublisherIdMap.get(Publisher);
 		if(pubID == null) {
 			System.out.println("Publisher entered incorrectly or not in game list");
+			pubID = 0;
 		}
 		description = description.equals("") ? null : description;
 		genre = genre.equals("") ? null : genre;
@@ -128,12 +129,16 @@ public class GameServices {
 				System.out.println("Publisher has to be an existing publisher or null.");
 				return false;
 			}
+			else if(value == 3) {
+				System.out.println("That Game Name is already in use");
+				return false;
+			}
 			cs = con.prepareCall("{? = call fn_GetGameID(?)}");
 			cs.registerOutParameter(1, Types.INTEGER);
 			cs.setString(2, name);
 			cs.execute();
 			GameIdMap.put(name, cs.getInt(1));
-//			GameIdMap.put(name, GameIdMap.size());
+//			System.out.println(GameIdMap.toString());
 			System.out.println("Game added sucessfully!");
 			System.out.println();
 			return true;
@@ -160,6 +165,7 @@ public class GameServices {
 		CallableStatement stmt;
 		try {
 			stmt = dbService.getConnection().prepareCall("{? = call UpdateGame(?, ?, ?, ?, ?, ?)}");
+			stmt.registerOutParameter(1, Types.INTEGER);
 			stmt.setInt(2, gameID);
 			stmt.setString(3, newName);
 			stmt.setString(4, newDesc);
@@ -172,7 +178,10 @@ public class GameServices {
 				System.out.println("GameName cannot be empty.");
 				return false;
 			}
-			
+			else if(value == 2) {
+				System.out.println("That Game Name is already in use");
+				return false;
+			}
 			if(newName != null) {
 				GameIdMap.remove(gameName);
 				GameIdMap.put(newName, gameID);

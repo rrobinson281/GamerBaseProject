@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,12 +44,20 @@ public class Ratings {
 		}
 		CallableStatement newRating = null;
 		try {
-			newRating = dbService.getConnection().prepareCall("{call CreateRating(?, ?, ?, ?)}");
-			newRating.setInt(1, gameID);
-			newRating.setString(2, this.username);
-			newRating.setString(3, review);
-			newRating.setFloat(4, rating);
+			newRating = dbService.getConnection().prepareCall("{? = call CreateRating(?, ?, ?, ?)}");
+			newRating.registerOutParameter(1, Types.INTEGER);
+			newRating.setInt(2, gameID);
+			newRating.setString(3, this.username);
+			newRating.setString(4, review);
+			newRating.setFloat(5, rating);
 			newRating.executeUpdate();
+			int result = newRating.getInt(1);
+			if(result == 3) {
+				System.out.println("The rating must be between 0 and 5");
+			}
+			else if(result == 4) {
+				System.out.println("You have already made a review of this game");
+			}
 			System.out.println("Rating created successfully");
 		} catch (SQLException e) {
 			System.out.println("Creation failed");

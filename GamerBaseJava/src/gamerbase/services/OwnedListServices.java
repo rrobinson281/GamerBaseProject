@@ -56,6 +56,10 @@ public class OwnedListServices {
 				System.out.println("The user must be an existing user.");
 				return false;
 			}
+			else if(value == 3) {
+				System.out.println("You already own that game!.");
+				return false;
+			}
 			if(value==0)System.out.println("Game added to owned list sucessfully!");
 			System.out.println();
 			return true;

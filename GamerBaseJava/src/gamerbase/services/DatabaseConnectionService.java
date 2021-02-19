@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public class DatabaseConnectionService {
 
 
-	private final String SampleURL = "jdbc:sqlserver://${dbServer};databaseName=${dbName};user=${user};password={${pass}}";
+	private final String URL = "jdbc:sqlserver://${dbServer};databaseName=${dbName};user=${user};password={${pass}}";
 
 	private Connection connection = null;
 
@@ -20,7 +20,7 @@ public class DatabaseConnectionService {
 	}
 
 	public boolean connect(String user, String pass) {
-		String fullUrl = SampleURL
+		String fullUrl = URL
 				.replace("${dbServer}", serverName)
 				.replace("${dbName}", databaseName)
 				.replace("${user}", user)

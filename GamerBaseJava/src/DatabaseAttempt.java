@@ -40,26 +40,18 @@ public class DatabaseAttempt {
 			Ratings ratingHandler = new Ratings(user, connection);
 			ProfileManagement p = new ProfileManagement(user, connection);
 			while(true) {
+				ownedListHandler = new OwnedListServices(connection, user);
 				String gameName ="";
 				String consoleName = "";
 				String gameDesc="";
 				String gameGenre="";
 				String gameRelease="";
 				String gamePub="";
-//				while(true) {
-//				System.out.println("username: ");
-//				String U = this.reader.readLine();
-//				System.out.println("password: ");
-//				String P = this.reader.readLine();
-//				if(P.equals("!")) break;
-//				userHandler.register(U, P);
-//				
-//				}
+				
 				System.out.println();
 				System.out.println("Enter command g for Game Commands");
 				System.out.println("Enter command c for Console Commands");
 				System.out.println("Enter command r for Rating Commands");
-				System.out.println("Enter command u for User Commands");
 				System.out.println("Enter command f for Friend Commands");
 				System.out.println("Enter command l for Lists Commands");
 				System.out.println("Enter command p for Profile Commands");
@@ -106,7 +98,7 @@ public class DatabaseAttempt {
 							ownedListHandler.AddOwnedGame(gameName);
 							break;
 						case "removegamefromownlist":
-							System.out.print("Enter the name of the game you want to add to your list: ");
+							System.out.print("Enter the name of the game you want to remove from your list: ");
 							gameName = this.reader.readLine();
 							ownedListHandler.RemoveOwnedGame(gameName);
 							break;
@@ -166,6 +158,7 @@ public class DatabaseAttempt {
 					    System.out.println("  CreateConsole -Add a console to the system");
 					    System.out.println("  UpdateConsole -Update a console's information");
 //					    System.out.println("  DeleteConsole -Remove a console from the system");
+					    System.out.println("  ViewGamesOnConsole -View games available on a console");
 					    System.out.print("Enter command or press x to exit: ");
 						command = this.reader.readLine();
 						if(inputReaderIsX(command)) {break;}
@@ -182,8 +175,10 @@ public class DatabaseAttempt {
 								String newName = this.reader.readLine();
 								consoleHandler.UpdateConsole(consoleName, newName);
 								break;
-							case "deleteconsole":
-								
+							case "viewgamesonconsole":
+								System.out.print("Enter the name of the console you see the library for: ");
+								consoleName = this.reader.readLine();
+								consoleHandler.ViewGamesPlayable(consoleName);
 								break;
 						}
 						break;
@@ -196,6 +191,8 @@ public class DatabaseAttempt {
 					  System.out.println("   ViewUserRatings -View a specific user's ratings");
 					  String r = this.reader.readLine().toLowerCase();
 					  if(r.equals("createrating")){
+						  System.out.println("Current Games: ");
+						  gameHandler.ReadAllGames();
 						  System.out.print("Please Enter Game Name: ");
 						  gameName = this.reader.readLine();
 						  System.out.println("Please Enter Review: ");
@@ -219,7 +216,7 @@ public class DatabaseAttempt {
 						  String review = this.reader.readLine();
 						  System.out.print("Please Enter New Rating (leave empty if no change): ");
 						  String rating = this.reader.readLine();
-						  float rate = Float.parseFloat(rating);
+						  float rate = rating.equals("") ? -1 : Float.parseFloat(rating);
 						  ratingHandler.updateRating(gameName, review, rate);
 						  break;
 					  }
@@ -251,6 +248,7 @@ public class DatabaseAttempt {
 						  System.out.println("Friends: ");
 						  for(int i = 0; i < friends.size(); i++) System.out.println(friends.get(i));
 					  }else if(command.equals("viewfriendownedlist")){
+						  System.out.println("Friends: ");
 						  ArrayList<String> friends = fl.readFriendsList();
 						  for(int i = 0; i < friends.size(); i++) System.out.println(friends.get(i));
 						  System.out.print("Please Enter Friend Name: ");
@@ -500,7 +498,9 @@ public class DatabaseAttempt {
         System.out.println("hello");
         BufferedReader reader =  new BufferedReader(new InputStreamReader(System.in));
         DatabaseAttempt test = new DatabaseAttempt(reader);
-        DatabaseConnectionService connection = new DatabaseConnectionService("titan.csse.rose-hulman.edu", "GamerBase-S1G8");
+//        DatabaseConnectionService connection = new DatabaseConnectionService("titan.csse.rose-hulman.edu", "GamerBase-S1G8");
+        DatabaseConnectionService connection = new DatabaseConnectionService("titan.csse.rose-hulman.edu", "GamerBase-S1G8-DEMO");
+        
         System.out.print("Type NEW if you are a new user otherwise press enter");
         if(connection.connect("fryaj1", "fryana1221")) {
         	if(loginToDatabase(reader, test, connection)) {

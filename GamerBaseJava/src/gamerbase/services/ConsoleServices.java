@@ -64,7 +64,11 @@ public class ConsoleServices {
 			cs.execute();
 			int value = cs.getInt(1);
 			if(value == 1) {
-				System.out.println("GameName cannot be null or empty.");
+				System.out.println("ConsoleName cannot be null or empty.");
+				return false;
+			}
+			if(value == 2) {
+				System.out.println("That console already exists!");
 				return false;
 			}
 			cs = con.prepareCall("{? = call fn_GetConsoleID(?)}");
@@ -72,6 +76,7 @@ public class ConsoleServices {
 			cs.setString(2, consoleName);
 			cs.execute();
 			ConsoleIdMap.put(consoleName, cs.getInt(1));
+			
 			System.out.println("Console added sucessfully!");
 			System.out.println();
 			return true;
@@ -101,6 +106,10 @@ public class ConsoleServices {
 			int value = stmt.getInt(1);
 			if(value == 1) {
 				System.out.println("Console Name cannot be empty.");
+				return false;
+			}
+			if(value == 2) {
+				System.out.println("Console Name already taken.");
 				return false;
 			}
 			if(newName != null) {
@@ -138,5 +147,25 @@ public class ConsoleServices {
 			e.printStackTrace();
 		}
 		return false;
+	}
+	public boolean ViewGamesPlayable(String consoleName) {
+		Integer consoleID = ConsoleIdMap.get(consoleName);
+		String queryString = "SELECT * From fn_AvailableGamesOnConsole(?)";
+		PreparedStatement stmt;
+		try {
+			stmt = dbService.getConnection().prepareStatement(queryString);
+			stmt.setInt(1, consoleID);
+			ResultSet rs = stmt.executeQuery();
+			System.out.println("Games available on the " + consoleName + ": " );
+			while(rs.next()) {
+				String gameName = rs.getString(rs.findColumn("Name"));
+				System.out.println(gameName);
+			}
+			System.out.println();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 }

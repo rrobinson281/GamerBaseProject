@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 
 public class ProfileManagement {
@@ -87,17 +88,22 @@ public class ProfileManagement {
 	public void addProfile(String profileType, String profileName) {
 		CallableStatement add = null;
 		try {
-			add = dbService.getConnection().prepareCall("{call CreateProfile(?, ?, ?)}");
-			add.setString(1, profileType);
-			add.setString(2, profileName);
-			add.setString(3, this.username);
+			add = dbService.getConnection().prepareCall("{? = call CreateProfile(?, ?, ?)}");
+			add.registerOutParameter(1, Types.INTEGER);
+			add.setString(2, profileType);
+			add.setString(3, profileName);
+			add.setString(4, this.username);
 			int result = add.executeUpdate();
 			if(result == 1){
-				System.out.print("Profile Added successfully");
-				return;
-			}else {
 				System.out.print("Profile failed to add");
 				return;
+			}
+			else if(result == 2) {
+				System.out.println("the User must be an existing User");
+				return;
+			}
+			else if(result == 3) {
+				System.out.println("A profile with those specs already exists");
 			}
 		} catch (SQLException e) {
 			System.out.print("Profile failed to add");
@@ -136,6 +142,10 @@ public class ProfileManagement {
 			int result = edit.executeUpdate();
 			if(result == 1){
 				System.out.print("Profile Edit Successful");
+				return;
+			}
+			if(result == 2) {
+				System.out.println("You already have a profile with that name and type");
 				return;
 			}
 		} catch (SQLException e) {
